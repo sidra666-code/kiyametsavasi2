@@ -1,55 +1,10 @@
 <script>
+
 /* =====================================================
    AYARLAR
 ===================================================== */
 
 const totalVideos = 5;
-
-
-/* =====================================================
-   KAYIT SİSTEMİ
-===================================================== */
-
-const savedPage = localStorage.getItem("sonSayfa");
-const savedVideo = Number(localStorage.getItem("sonVideo") || 1);
-
-
-/*
-Sayfa daha önce kaydedilmişse
-index.html açıldığında otomatik olarak
-kaldığı yere gönder.
-*/
-
-if (savedPage === "maden.html") {
-
-    window.location.replace("maden.html");
-
-}
-
-else if (savedPage === "devam.html") {
-
-    window.location.replace("devam.html");
-
-}
-
-
-/* =====================================================
-   VİDEO SONLARINDAKİ BUTON YAZILARI
-===================================================== */
-
-const nextTexts = {
-
-    1: "İLERLE",
-
-    2: "GEÇ",
-
-    3: "DAĞA ÇIK",
-
-    4: "KÖYE GİT",
-
-    5: "İLERLE"
-
-};
 
 
 /* =====================================================
@@ -99,6 +54,25 @@ let timerID = null;
 
 
 /* =====================================================
+   VİDEO BUTON YAZILARI
+===================================================== */
+
+const nextTexts = {
+
+    1: "İLERLE",
+
+    2: "GEÇ",
+
+    3: "DAĞA ÇIK",
+
+    4: "KÖYE GİT",
+
+    5: "İLERLE"
+
+};
+
+
+/* =====================================================
    VİDEO YÜKLE
 ===================================================== */
 
@@ -106,22 +80,24 @@ function loadVideo(number) {
 
     currentVideo = number;
 
+
     /*
-    Hangi videoda kaldığını kaydet.
+    Oyuncunun nerede kaldığını kaydet.
     */
 
     localStorage.setItem(
-        "sonSayfa",
-        "index.html"
+        "oyunSayfasi",
+        "index"
     );
 
     localStorage.setItem(
-        "sonVideo",
+        "oyunVideosu",
         number
     );
 
 
-    endScreen.style.display = "none";
+    endScreen.style.display =
+        "none";
 
 
     if (timerID) {
@@ -139,14 +115,16 @@ function loadVideo(number) {
     video.load();
 
 
-    video.play().catch(function(error) {
+    video.play().catch(
+        function(error) {
 
-        console.log(
-            "Video başlatılamadı:",
-            error
-        );
+            console.log(
+                "Video başlatılamadı:",
+                error
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -171,23 +149,33 @@ function lockButtons() {
 
     nextTimer.classList.remove("counting");
 
-    repeatTimer.style.width = "0%";
+    repeatTimer.style.width =
+        "0%";
 
-    nextTimer.style.width = "0%";
+    nextTimer.style.width =
+        "0%";
 
     void repeatTimer.offsetWidth;
 
     void nextTimer.offsetWidth;
 
-    repeatTimer.classList.add("counting");
+    repeatTimer.classList.add(
+        "counting"
+    );
 
-    nextTimer.classList.add("counting");
+    nextTimer.classList.add(
+        "counting"
+    );
 
-    timerID = setTimeout(function() {
 
-        unlockButtons();
+    timerID = setTimeout(
+        function() {
 
-    }, 10000);
+            unlockButtons();
+
+        },
+        10000
+    );
 
 }
 
@@ -208,13 +196,19 @@ function unlockButtons() {
 
     nextButton.classList.add("active");
 
-    repeatTimer.classList.remove("counting");
+    repeatTimer.classList.remove(
+        "counting"
+    );
 
-    nextTimer.classList.remove("counting");
+    nextTimer.classList.remove(
+        "counting"
+    );
 
-    repeatTimer.style.width = "100%";
+    repeatTimer.style.width =
+        "100%";
 
-    nextTimer.style.width = "100%";
+    nextTimer.style.width =
+        "100%";
 
 }
 
@@ -233,6 +227,7 @@ startButton.addEventListener(
         game.style.display =
             "block";
 
+
         try {
 
             if (
@@ -247,7 +242,6 @@ startButton.addEventListener(
             }
 
         }
-
         catch(error) {
 
             console.log(
@@ -258,29 +252,31 @@ startButton.addEventListener(
 
 
         /*
-        Daha önce kaldığı video varsa
-        oradan devam et.
+        Daha önce kaldığı videoyu bul.
         */
 
-        let videoToStart =
+        let savedVideo =
             Number(
                 localStorage.getItem(
-                    "sonVideo"
+                    "oyunVideosu"
                 )
-            ) || 1;
+            );
 
 
         if (
-            videoToStart < 1 ||
-            videoToStart > totalVideos
+            !savedVideo ||
+            savedVideo < 1 ||
+            savedVideo > totalVideos
         ) {
 
-            videoToStart = 1;
+            savedVideo = 1;
 
         }
 
 
-        loadVideo(videoToStart);
+        loadVideo(
+            savedVideo
+        );
 
     }
 );
@@ -329,7 +325,7 @@ repeatButton.addEventListener(
     "click",
     function() {
 
-        if (buttonsLocked) {
+        if(buttonsLocked) {
 
             return;
 
@@ -347,14 +343,14 @@ repeatButton.addEventListener(
 
 
 /* =====================================================
-   İLERLE / SEÇENEK
+   İLERLE
 ===================================================== */
 
 nextButton.addEventListener(
     "click",
     function() {
 
-        if (buttonsLocked) {
+        if(buttonsLocked) {
 
             return;
 
@@ -362,26 +358,27 @@ nextButton.addEventListener(
 
 
         /*
-        5. video bittiyse
-        artık 6.mp4 yok.
-
-        Doğrudan maden.html'e git.
+        5.mp4 bittiyse
+        maden.html açılır.
         */
 
-        if (currentVideo === 5) {
+        if(currentVideo === 5) {
 
             localStorage.setItem(
-                "sonSayfa",
-                "maden.html"
+                "oyunSayfasi",
+                "maden"
             );
 
+
             localStorage.removeItem(
-                "sonVideo"
+                "oyunVideosu"
             );
+
 
             window.location.replace(
                 "maden.html"
             );
+
 
             return;
 
@@ -411,6 +408,7 @@ video.addEventListener(
     }
 );
 
+
 video.addEventListener(
     "click",
     function(event) {
@@ -429,7 +427,7 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-        if (
+        if(
             event.code === "Space"
         ) {
 
@@ -437,7 +435,8 @@ document.addEventListener(
 
         }
 
-        if (
+
+        if(
 
             event.code === "ArrowLeft" ||
 
@@ -465,7 +464,7 @@ video.addEventListener(
     "pause",
     function() {
 
-        if (
+        if(
 
             !video.ended &&
 
@@ -495,7 +494,7 @@ document.addEventListener(
     "visibilitychange",
     function() {
 
-        if (
+        if(
 
             !document.hidden &&
 
@@ -517,5 +516,22 @@ document.addEventListener(
 
     }
 );
+
+
+/* =====================================================
+   ESKİ HATALI KAYITLARI DÜZELT
+===================================================== */
+
+/*
+Daha önce kullandığımız
+"sonSayfa" sistemi varsa temizle.
+
+Bu sadece eski sistemin kayıtlarını
+bir kere temizler.
+Yeni kayıt sistemine dokunmaz.
+*/
+
+localStorage.removeItem("sonSayfa");
+localStorage.removeItem("sonVideo");
 
 </script>
