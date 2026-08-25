@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
 
 <meta charset="UTF-8">
@@ -60,8 +59,7 @@ body {
 
     color: white;
 
-    font-size:
-        clamp(28px, 6vw, 70px);
+    font-size: clamp(28px, 6vw, 70px);
 
     font-weight: 700;
 
@@ -79,11 +77,9 @@ body {
 
     border-radius: 14px;
 
-    border:
-        1px solid rgba(255,255,255,.3);
+    border: 1px solid rgba(255,255,255,.3);
 
-    background:
-        rgba(255,255,255,.08);
+    background: rgba(255,255,255,.08);
 
     color: white;
 
@@ -104,8 +100,7 @@ body {
 
     transform: scale(1.05);
 
-    background:
-        rgba(255,255,255,.15);
+    background: rgba(255,255,255,.15);
 }
 
 .startButton:active {
@@ -154,8 +149,7 @@ body {
 
     flex-direction: column;
 
-    background:
-        rgba(0,0,0,.45);
+    background: rgba(0,0,0,.45);
 
     backdrop-filter: blur(4px);
 
@@ -166,8 +160,7 @@ body {
 
     color: white;
 
-    font-size:
-        clamp(20px, 4vw, 42px);
+    font-size: clamp(20px, 4vw, 42px);
 
     font-weight: bold;
 
@@ -214,13 +207,11 @@ body {
 
     border-radius: 10px;
 
-    border:
-        1px solid rgba(255,255,255,.25);
+    border: 1px solid rgba(255,255,255,.25);
 
     color: white;
 
-    background:
-        rgba(255,255,255,.10);
+    background: rgba(255,255,255,.10);
 
     backdrop-filter: blur(15px);
 
@@ -241,8 +232,7 @@ body {
 
     opacity: 1;
 
-    background:
-        rgba(255,255,255,.18);
+    background: rgba(255,255,255,.18);
 
     transform: scale(1.02);
 }
@@ -258,8 +248,7 @@ body {
 
     height: 4px;
 
-    background:
-        rgba(255,255,255,.18);
+    background: rgba(255,255,255,.18);
 
     border-radius: 10px;
 
@@ -409,7 +398,6 @@ body {
 
 </head>
 
-
 <body>
 
 
@@ -430,7 +418,6 @@ body {
 </div>
 
 
-
 <div id="startScreen">
 
     <div class="title">
@@ -446,7 +433,6 @@ body {
     </button>
 
 </div>
-
 
 
 <div id="game">
@@ -475,6 +461,8 @@ body {
         <div class="buttons">
 
 
+            <!-- TEKRARLA -->
+
             <div class="actionWrapper">
 
                 <button
@@ -498,6 +486,7 @@ body {
             </div>
 
 
+            <!-- İLERLE -->
 
             <div class="actionWrapper">
 
@@ -529,7 +518,6 @@ body {
 </div>
 
 
-
 <script>
 
 /* =====================================================
@@ -540,70 +528,81 @@ const totalVideos = 7;
 
 
 /* =====================================================
+   LOCAL STORAGE
+===================================================== */
+
+/*
+   Kaydedilecek bilgiler:
+
+   hikaye_sahne
+   hikaye_maden
+
+   hikaye_sahne:
+   1-7 arasındaki son sahneyi tutar.
+
+   hikaye_maden:
+   1 olursa oyuncu madencilik bölümüne geçmiştir.
+*/
+
+const SAVE_SCENE = "hikaye_sahne";
+const SAVE_MINE = "hikaye_maden";
+
+
+/* =====================================================
+   SON KALINAN SAHNEYİ AL
+===================================================== */
+
+let savedScene =
+    Number(
+        localStorage.getItem(
+            SAVE_SCENE
+        )
+    );
+
+
+/*
+   Kayıt yoksa 1. sahneden başla.
+*/
+
+if (
+    !savedScene ||
+    savedScene < 1 ||
+    savedScene > totalVideos
+) {
+
+    savedScene = 1;
+
+}
+
+
+/* =====================================================
    BUTON YAZILARI
 ===================================================== */
 
 const nextTexts = {
 
-    1: "İLERLE",
+    1:
+        "İLERLE",
 
-    2: "GEÇ",
+    2:
+        "GEÇ",
 
-    3: "DAĞA ÇIK",
+    3:
+        "DAĞA ÇIK",
 
-    4: "KÖYE GİT",
+    4:
+        "KÖYE GİT",
 
-    5: "İLERLE",
+    5:
+        "GEÇ",
 
-    6: "MADENCİLİK YAP",
+    6:
+        "TOPRAĞI KAZ",
 
-    7: "YARDIM ET"
+    7:
+        "YARDIM ET"
 
 };
-
-
-/* =====================================================
-   LOCALSTORAGE
-===================================================== */
-
-/*
-    Oyuncunun kaldığı video burada tutulur.
-
-    Örnek:
-
-    5 = 5.mp4
-    6 = 6.mp4
-    7 = 7.mp4
-*/
-
-const SAVE_KEY =
-    "hikaye_current_video";
-
-
-/*
-    Eğer daha önce kayıt varsa
-    kayıtlı videoyu al.
-
-    Yoksa 1. videodan başla.
-*/
-
-let savedVideo =
-    parseInt(
-        localStorage.getItem(
-            SAVE_KEY
-        )
-    );
-
-
-if (
-    isNaN(savedVideo) ||
-    savedVideo < 1 ||
-    savedVideo > totalVideos
-) {
-
-    savedVideo = 1;
-
-}
 
 
 /* =====================================================
@@ -615,54 +614,45 @@ const startScreen =
         "startScreen"
     );
 
-
 const startButton =
     document.getElementById(
         "startButton"
     );
-
 
 const game =
     document.getElementById(
         "game"
     );
 
-
 const video =
     document.getElementById(
         "video"
     );
-
 
 const endScreen =
     document.getElementById(
         "endScreen"
     );
 
-
 const endTitle =
     document.getElementById(
         "endTitle"
     );
-
 
 const repeatButton =
     document.getElementById(
         "repeatButton"
     );
 
-
 const nextButton =
     document.getElementById(
         "nextButton"
     );
 
-
 const repeatTimer =
     document.getElementById(
         "repeatTimer"
     );
-
 
 const nextTimer =
     document.getElementById(
@@ -675,7 +665,7 @@ const nextTimer =
 ===================================================== */
 
 let currentVideo =
-    savedVideo;
+    savedScene;
 
 let buttonsLocked =
     true;
@@ -688,11 +678,25 @@ let timerID =
    KAYDET
 ===================================================== */
 
-function saveProgress(number) {
+function saveProgress(scene) {
 
     localStorage.setItem(
-        SAVE_KEY,
-        String(number)
+        SAVE_SCENE,
+        String(scene)
+    );
+
+}
+
+
+/* =====================================================
+   MADEN BÖLÜMÜNE GEÇİLDİ
+===================================================== */
+
+function saveMineProgress() {
+
+    localStorage.setItem(
+        SAVE_MINE,
+        "1"
     );
 
 }
@@ -705,7 +709,7 @@ function saveProgress(number) {
 function loadVideo(number) {
 
     /*
-        7'den daha ileri video yok.
+       Güvenlik
     */
 
     if (
@@ -723,16 +727,16 @@ function loadVideo(number) {
 
 
     /*
-        İLERLEMEYİ HEMEN KAYDET
+       SAHNEYİ LOCAL'E KAYDET
     */
 
     saveProgress(
-        number
+        currentVideo
     );
 
 
     /*
-        Bitiş ekranını kapat
+       Bitiş ekranını kapat
     */
 
     endScreen.style.display =
@@ -740,7 +744,7 @@ function loadVideo(number) {
 
 
     /*
-        Timer temizle
+       Timer temizle
     */
 
     if (timerID) {
@@ -755,7 +759,7 @@ function loadVideo(number) {
 
 
     /*
-        Videoyu yükle
+       Videoyu yükle
     */
 
     video.src =
@@ -765,7 +769,7 @@ function loadVideo(number) {
 
 
     /*
-        Oynat
+       Videoyu başlat
     */
 
     video.play().catch(
@@ -825,7 +829,6 @@ function lockButtons() {
 
 
     void repeatTimer.offsetWidth;
-
     void nextTimer.offsetWidth;
 
 
@@ -896,27 +899,37 @@ function unlockButtons() {
 
 
 /* =====================================================
-   BAŞLAT
+   HİKÂYEYİ BAŞLAT
 ===================================================== */
 
 startButton.addEventListener(
     "click",
     async function() {
 
+        /*
+           Başlangıç ekranını kapat
+        */
 
         startScreen.style.display =
             "none";
 
 
+        /*
+           Oyunu aç
+        */
+
         game.style.display =
             "block";
 
 
+        /*
+           Tam ekran
+        */
+
         try {
 
             if (
-                document
-                    .documentElement
+                document.documentElement
                     .requestFullscreen
             ) {
 
@@ -938,11 +951,11 @@ startButton.addEventListener(
 
 
         /*
-            KAYITLI YERDEN BAŞLA
+           KALINAN SAHNEYİ AÇ
         */
 
         loadVideo(
-            savedVideo
+            savedScene
         );
 
     }
@@ -956,7 +969,6 @@ startButton.addEventListener(
 video.addEventListener(
     "ended",
     function() {
-
 
         video.pause();
 
@@ -976,28 +988,35 @@ video.addEventListener(
 
 
         /*
-            6. video:
-
-            TEKRARLA
-            MADENCİLİK YAP
-
+           5. video
         */
 
         if (
-            currentVideo === 6
+            currentVideo === 5
         ) {
 
             nextButton.textContent =
-                "⛏️ MADENCİLİK YAP";
+                "➡ GEÇ";
 
         }
 
 
         /*
-            7. video:
+           6. video
+        */
 
-            TEKRARLA
-            YARDIM ET
+        else if (
+            currentVideo === 6
+        ) {
+
+            nextButton.textContent =
+                "⛏️ TOPRAĞI KAZ";
+
+        }
+
+
+        /*
+           7. video
         */
 
         else if (
@@ -1011,7 +1030,7 @@ video.addEventListener(
 
 
         /*
-            Diğer videolar
+           Diğer videolar
         */
 
         else {
@@ -1019,13 +1038,19 @@ video.addEventListener(
             nextButton.textContent =
                 "➡ " +
                 (
-                    nextTexts[currentVideo]
+                    nextTexts[
+                        currentVideo
+                    ]
                     ||
                     "İLERLE"
                 );
 
         }
 
+
+        /*
+           10 saniyelik süre
+        */
 
         lockButtons();
 
@@ -1041,10 +1066,7 @@ repeatButton.addEventListener(
     "click",
     function() {
 
-
-        if (
-            buttonsLocked
-        ) {
+        if (buttonsLocked) {
 
             return;
 
@@ -1059,95 +1081,102 @@ repeatButton.addEventListener(
             0;
 
 
-        video.play().catch(
-            function() {}
-        );
+        video.play();
 
     }
 );
 
 
 /* =====================================================
-   İLERLE / ÖZEL BUTON
+   İLERLE / TOPRAĞI KAZ / YARDIM ET
 ===================================================== */
 
 nextButton.addEventListener(
     "click",
     function() {
 
-
-        if (
-            buttonsLocked
-        ) {
+        if (buttonsLocked) {
 
             return;
 
         }
 
 
-        /*
-        =================================================
-        6. VİDEO SONU
-        =================================================
-
-        MADENCİLİK YAP
-        → maden.html
-        */
-
-        if (
-            currentVideo === 6
-        ) {
-
-            /*
-                7. bölüme geçileceğini kaydet.
-            */
-
-            saveProgress(7);
-
-
-            /*
-                Madencilik ekranını aç.
-            */
-
-            window.location.href =
-                "maden.html";
-
-            return;
-
-        }
-
-
-        /*
-        =================================================
-        7. VİDEO SONU
-        =================================================
-
-        YARDIM ET
-        → yardim.html
-        */
+        /* --------------------------------
+           7. VİDEO SONRASI
+           YARDIM ET → maden.html
+        -------------------------------- */
 
         if (
             currentVideo === 7
         ) {
 
             /*
-                BURADAKİ DOSYA ADINI
-                KENDİ DOSYA ADINLA DEĞİŞTİR.
+               Madencilik bölümüne
+               geçildiğini kaydet.
             */
 
+            saveMineProgress();
+
+
+            /*
+               Sonraki bölüm maden.
+            */
+
+            localStorage.setItem(
+                SAVE_SCENE,
+                "7"
+            );
+
+
             window.location.href =
-                "yardim.html";
+                "maden.html";
+
 
             return;
 
         }
 
 
-        /*
-        =================================================
-        NORMAL SONRAKİ VİDEO
-        =================================================
-        */
+        /* --------------------------------
+           6. VİDEO SONRASI
+           TOPRAĞI KAZ → 7.mp4
+        -------------------------------- */
+
+        if (
+            currentVideo === 6
+        ) {
+
+            saveProgress(7);
+
+            loadVideo(7);
+
+            return;
+
+        }
+
+
+        /* --------------------------------
+           5. VİDEO SONRASI
+           GEÇ → 6.mp4
+        -------------------------------- */
+
+        if (
+            currentVideo === 5
+        ) {
+
+            saveProgress(6);
+
+            loadVideo(6);
+
+            return;
+
+        }
+
+
+        /* --------------------------------
+           NORMAL İLERLEME
+        -------------------------------- */
 
         const nextVideo =
             currentVideo + 1;
@@ -1207,7 +1236,6 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-
         if (
             event.code === "Space"
         ) {
@@ -1238,13 +1266,12 @@ document.addEventListener(
 
 
 /* =====================================================
-   VİDEO DURURSA
+   VİDEO DURURSA TEKRAR OYNAT
 ===================================================== */
 
 video.addEventListener(
     "pause",
     function() {
-
 
         if (
 
@@ -1269,13 +1296,12 @@ video.addEventListener(
 
 
 /* =====================================================
-   SAYFAYA GERİ DÖNÜŞ
+   UYGULAMAYA GERİ DÖNÜLDÜĞÜNDE
 ===================================================== */
 
 document.addEventListener(
     "visibilitychange",
     function() {
-
 
         if (
 
@@ -1303,5 +1329,4 @@ document.addEventListener(
 </script>
 
 </body>
-
 </html>
