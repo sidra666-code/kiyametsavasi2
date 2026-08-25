@@ -1,405 +1,402 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width,
-initial-scale=1.0,
-maximum-scale=1.0,
-user-scalable=no">
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no">
 
 <title>Hikâye</title>
 
 <style>
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-    font-family:Arial,Helvetica,sans-serif;
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-#startScreen{
+#startScreen {
 
-    position:fixed;
-    inset:0;
+    position: fixed;
+    inset: 0;
 
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
 
-    display:flex;
-    flex-direction:column;
+    display: flex;
+    flex-direction: column;
 
-    justify-content:center;
-    align-items:center;
+    justify-content: center;
+    align-items: center;
 
     background:
-    radial-gradient(
-        circle at center,
-        #242424 0%,
-        #0b0b0b 55%,
-        #000 100%
-    );
+        radial-gradient(
+            circle at center,
+            #242424 0%,
+            #0b0b0b 55%,
+            #000 100%
+        );
 
-    z-index:100;
+    z-index: 100;
 }
 
-.title{
+.title {
 
-    color:white;
+    color: white;
 
-    font-size:clamp(28px,6vw,70px);
+    font-size: clamp(28px, 6vw, 70px);
 
-    font-weight:700;
+    font-weight: 700;
 
-    letter-spacing:6px;
+    letter-spacing: 6px;
 
-    margin-bottom:40px;
+    margin-bottom: 40px;
 
     text-shadow:
-    0 0 20px rgba(255,255,255,.2);
+        0 0 20px rgba(255,255,255,.2);
 }
 
-.startButton{
+.startButton {
 
-    padding:18px 45px;
+    padding: 18px 45px;
 
-    border-radius:14px;
+    border-radius: 14px;
 
-    border:1px solid rgba(255,255,255,.3);
+    border: 1px solid rgba(255,255,255,.3);
 
-    background:rgba(255,255,255,.08);
+    background: rgba(255,255,255,.08);
 
-    color:white;
+    color: white;
 
-    font-size:18px;
+    font-size: 18px;
 
-    font-weight:bold;
+    font-weight: bold;
 
-    letter-spacing:2px;
+    letter-spacing: 2px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    backdrop-filter:blur(15px);
+    backdrop-filter: blur(15px);
 
-    transition:.25s;
+    transition: .25s;
 }
 
-.startButton:hover{
+.startButton:hover {
 
-    transform:scale(1.05);
+    transform: scale(1.05);
 
-    background:rgba(255,255,255,.15);
+    background: rgba(255,255,255,.15);
 }
 
-.startButton:active{
+.startButton:active {
 
-    transform:scale(.96);
+    transform: scale(.96);
 }
 
-#game{
+#game {
 
-    position:fixed;
-    inset:0;
+    position: fixed;
+    inset: 0;
 
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
 
-    background:#000;
+    background: #000;
 
-    display:none;
+    display: none;
 
-    z-index:10;
+    z-index: 10;
 }
 
-#video{
+#video {
 
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
 
-    object-fit:contain;
+    object-fit: contain;
 
-    background:#000;
+    background: #000;
 
-    display:block;
+    display: block;
 
-    outline:none;
+    outline: none;
 }
 
-#endScreen{
+#endScreen {
 
-    position:absolute;
-    inset:0;
+    position: absolute;
+    inset: 0;
 
-    display:none;
+    display: none;
 
-    justify-content:center;
-    align-items:center;
+    justify-content: center;
+    align-items: center;
 
-    flex-direction:column;
+    flex-direction: column;
 
-    background:rgba(0,0,0,.45);
+    background: rgba(0,0,0,.45);
 
-    backdrop-filter:blur(4px);
+    backdrop-filter: blur(4px);
 
-    z-index:30;
+    z-index: 30;
 }
 
-.endTitle{
+.endTitle {
 
-    color:white;
+    color: white;
 
-    font-size:clamp(20px,4vw,42px);
+    font-size: clamp(20px, 4vw, 42px);
 
-    font-weight:bold;
+    font-weight: bold;
 
-    text-align:center;
+    text-align: center;
 
-    margin-bottom:35px;
+    margin-bottom: 35px;
 
-    padding:0 20px;
+    padding: 0 20px;
 
     text-shadow:
-    0 0 20px #000;
+        0 0 20px #000;
 }
 
-.buttons{
+.buttons {
 
-    display:flex;
+    display: flex;
 
-    gap:25px;
+    gap: 25px;
 
-    justify-content:center;
-    align-items:flex-start;
+    justify-content: center;
+    align-items: flex-start;
 
-    flex-wrap:wrap;
+    flex-wrap: wrap;
 }
 
-.actionWrapper{
+.actionWrapper {
 
-    display:flex;
+    display: flex;
 
-    flex-direction:column;
+    flex-direction: column;
 
-    align-items:center;
+    align-items: center;
 
-    gap:8px;
+    gap: 8px;
 }
 
-.actionButton{
+.actionButton {
 
-    min-width:190px;
+    min-width: 190px;
 
-    min-height:65px;
+    min-height: 65px;
 
-    padding:16px 25px;
+    padding: 16px 25px;
 
-    border-radius:10px;
+    border-radius: 10px;
 
-    border:1px solid rgba(255,255,255,.25);
+    border: 1px solid rgba(255,255,255,.25);
 
-    color:white;
+    color: white;
 
-    background:rgba(255,255,255,.10);
+    background: rgba(255,255,255,.10);
 
-    backdrop-filter:blur(15px);
+    backdrop-filter: blur(15px);
 
-    font-size:14px;
+    font-size: 14px;
 
-    font-weight:bold;
+    font-weight: bold;
 
-    letter-spacing:1px;
+    letter-spacing: 1px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    opacity:.45;
+    opacity: .45;
 
-    transition:.25s;
+    transition: .25s;
 }
 
-.actionButton.active{
+.actionButton.active {
 
-    opacity:1;
+    opacity: 1;
 
-    background:rgba(255,255,255,.18);
+    background: rgba(255,255,255,.18);
 
-    transform:scale(1.02);
+    transform: scale(1.02);
 }
 
-.actionButton.active:active{
+.actionButton.active:active {
 
-    transform:scale(.95);
+    transform: scale(.95);
 }
 
-.timerBar{
+.timerBar {
 
-    width:190px;
+    width: 190px;
 
-    height:4px;
+    height: 4px;
 
-    background:rgba(255,255,255,.18);
+    background: rgba(255,255,255,.18);
 
-    border-radius:10px;
+    border-radius: 10px;
 
-    overflow:hidden;
+    overflow: hidden;
 }
 
-.timerFill{
+.timerFill {
 
-    width:0%;
+    width: 0%;
 
-    height:100%;
+    height: 100%;
 
-    background:white;
+    background: white;
 
-    border-radius:10px;
+    border-radius: 10px;
 }
 
-.timerFill.counting{
+.timerFill.counting {
 
     animation:
-    fillTimer 10s linear forwards;
+        fillTimer 10s linear forwards;
 }
 
-@keyframes fillTimer{
+@keyframes fillTimer {
 
-    from{
-        width:0%;
+    from {
+        width: 0%;
     }
 
-    to{
-        width:100%;
+    to {
+        width: 100%;
     }
 }
 
-#rotateMessage{
+#rotateMessage {
 
-    position:fixed;
+    position: fixed;
 
-    inset:0;
+    inset: 0;
 
-    background:#000;
+    background: #000;
 
-    color:white;
+    color: white;
 
-    display:none;
+    display: none;
 
-    justify-content:center;
-    align-items:center;
+    justify-content: center;
+    align-items: center;
 
-    flex-direction:column;
+    flex-direction: column;
 
-    text-align:center;
+    text-align: center;
 
-    z-index:9999;
+    z-index: 9999;
 
-    padding:30px;
+    padding: 30px;
 }
 
-.phoneIcon{
+.phoneIcon {
 
-    font-size:50px;
+    font-size: 50px;
 
-    margin-bottom:20px;
+    margin-bottom: 20px;
 
     animation:
-    rotatePhone 1.5s infinite;
+        rotatePhone 1.5s infinite;
 }
 
-@keyframes rotatePhone{
+@keyframes rotatePhone {
 
-    0%{
-        transform:rotate(0deg);
+    0% {
+        transform: rotate(0deg);
     }
 
-    50%{
-        transform:rotate(90deg);
+    50% {
+        transform: rotate(90deg);
     }
 
-    100%{
-        transform:rotate(90deg);
-    }
-}
-
-@media (orientation:portrait){
-
-    #rotateMessage{
-        display:flex;
+    100% {
+        transform: rotate(90deg);
     }
 }
 
-@media (orientation:landscape){
+@media (orientation: portrait) {
 
-    #rotateMessage{
-        display:none;
+    #rotateMessage {
+        display: flex;
     }
 }
 
-@media (max-width:700px){
+@media (orientation: landscape) {
 
-    .title{
+    #rotateMessage {
+        display: none;
+    }
+}
 
-        font-size:28px;
+@media (max-width: 700px) {
 
-        margin-bottom:25px;
+    .title {
+
+        font-size: 28px;
+
+        margin-bottom: 25px;
     }
 
-    .startButton{
+    .startButton {
 
-        padding:15px 30px;
+        padding: 15px 30px;
 
-        font-size:15px;
+        font-size: 15px;
     }
 
-    .endTitle{
+    .endTitle {
 
-        font-size:21px;
+        font-size: 21px;
 
-        margin-bottom:20px;
+        margin-bottom: 20px;
     }
 
-    .buttons{
+    .buttons {
 
-        gap:12px;
+        gap: 12px;
     }
 
-    .actionButton{
+    .actionButton {
 
-        min-width:150px;
+        min-width: 150px;
 
-        min-height:55px;
+        min-height: 55px;
 
-        padding:12px 15px;
+        padding: 12px 15px;
 
-        font-size:12px;
+        font-size: 12px;
     }
 
-    .timerBar{
+    .timerBar {
 
-        width:150px;
+        width: 150px;
 
-        height:4px;
+        height: 4px;
     }
 
 }
 
 </style>
-
 </head>
 
 <body>
-
 
 <div id="rotateMessage">
 
@@ -411,7 +408,7 @@ body{
         Telefonu Yatay Çevir
     </h2>
 
-    <p style="margin-top:10px;opacity:.7;">
+    <p style="margin-top:10px; opacity:.7;">
         Hikâyeyi oynamak için telefonu yatay kullan.
     </p>
 
@@ -459,7 +456,6 @@ body{
 
 
         <div class="buttons">
-
 
             <div class="actionWrapper">
 
@@ -515,9 +511,8 @@ body{
 
 <script>
 
-
 /* =====================================================
-   AYARLAR
+   TOPLAM VİDEO
 ===================================================== */
 
 const totalVideos = 5;
@@ -529,15 +524,15 @@ const totalVideos = 5;
 
 const nextTexts = {
 
-    1:"İLERLE",
+    1: "İLERLE",
 
-    2:"GEÇ",
+    2: "GEÇ",
 
-    3:"DAĞA ÇIK",
+    3: "DAĞA ÇIK",
 
-    4:"KÖYE GİT",
+    4: "KÖYE GİT",
 
-    5:"İLERLE"
+    5: "İLERLE"
 
 };
 
@@ -547,34 +542,34 @@ const nextTexts = {
 ===================================================== */
 
 const startScreen =
-document.getElementById("startScreen");
+    document.getElementById("startScreen");
 
 const startButton =
-document.getElementById("startButton");
+    document.getElementById("startButton");
 
 const game =
-document.getElementById("game");
+    document.getElementById("game");
 
 const video =
-document.getElementById("video");
+    document.getElementById("video");
 
 const endScreen =
-document.getElementById("endScreen");
+    document.getElementById("endScreen");
 
 const endTitle =
-document.getElementById("endTitle");
+    document.getElementById("endTitle");
 
 const repeatButton =
-document.getElementById("repeatButton");
+    document.getElementById("repeatButton");
 
 const nextButton =
-document.getElementById("nextButton");
+    document.getElementById("nextButton");
 
 const repeatTimer =
-document.getElementById("repeatTimer");
+    document.getElementById("repeatTimer");
 
 const nextTimer =
-document.getElementById("nextTimer");
+    document.getElementById("nextTimer");
 
 
 /* =====================================================
@@ -592,31 +587,14 @@ let timerID = null;
    VİDEO YÜKLE
 ===================================================== */
 
-function loadVideo(number){
+function loadVideo(number) {
 
     currentVideo = number;
 
-
-    /*
-    Nerede olduğumuzu kaydet.
-    */
-
-    localStorage.setItem(
-        "oyunSayfasi",
-        "index"
-    );
-
-    localStorage.setItem(
-        "oyunVideosu",
-        String(number)
-    );
+    endScreen.style.display = "none";
 
 
-    endScreen.style.display =
-    "none";
-
-
-    if(timerID){
+    if (timerID) {
 
         clearTimeout(timerID);
 
@@ -625,22 +603,19 @@ function loadVideo(number){
     }
 
 
-    video.src =
-    number + ".mp4";
+    video.src = number + ".mp4";
 
     video.load();
 
 
-    video.play().catch(
-        function(error){
+    video.play().catch(function(error) {
 
-            console.log(
-                "Video başlatılamadı:",
-                error
-            );
+        console.log(
+            "Video başlatılamadı:",
+            error
+        );
 
-        }
-    );
+    });
 
 }
 
@@ -649,7 +624,7 @@ function loadVideo(number){
    BUTONLARI KİLİTLE
 ===================================================== */
 
-function lockButtons(){
+function lockButtons() {
 
     buttonsLocked = true;
 
@@ -665,36 +640,24 @@ function lockButtons(){
 
     nextTimer.classList.remove("counting");
 
-    repeatTimer.style.width =
-    "0%";
+    repeatTimer.style.width = "0%";
 
-    nextTimer.style.width =
-    "0%";
-
+    nextTimer.style.width = "0%";
 
     void repeatTimer.offsetWidth;
 
     void nextTimer.offsetWidth;
 
+    repeatTimer.classList.add("counting");
 
-    repeatTimer.classList.add(
-        "counting"
-    );
-
-    nextTimer.classList.add(
-        "counting"
-    );
+    nextTimer.classList.add("counting");
 
 
-    timerID =
-    setTimeout(
-        function(){
+    timerID = setTimeout(function() {
 
-            unlockButtons();
+        unlockButtons();
 
-        },
-        10000
-    );
+    }, 10000);
 
 }
 
@@ -703,7 +666,7 @@ function lockButtons(){
    BUTONLARI AÇ
 ===================================================== */
 
-function unlockButtons(){
+function unlockButtons() {
 
     buttonsLocked = false;
 
@@ -715,19 +678,13 @@ function unlockButtons(){
 
     nextButton.classList.add("active");
 
-    repeatTimer.classList.remove(
-        "counting"
-    );
+    repeatTimer.classList.remove("counting");
 
-    nextTimer.classList.remove(
-        "counting"
-    );
+    nextTimer.classList.remove("counting");
 
-    repeatTimer.style.width =
-    "100%";
+    repeatTimer.style.width = "100%";
 
-    nextTimer.style.width =
-    "100%";
+    nextTimer.style.width = "100%";
 
 }
 
@@ -738,77 +695,29 @@ function unlockButtons(){
 
 startButton.addEventListener(
     "click",
-    async function(){
+    async function() {
 
-        /*
-        Daha önce kaldığımız yeri oku.
-        */
+        startScreen.style.display = "none";
 
-        const savedPage =
-        localStorage.getItem(
-            "oyunSayfasi"
-        );
+        game.style.display = "block";
 
 
-        /*
-        Maden bölümündeysek
-        direkt madene git.
-        */
+        try {
 
-        if(savedPage === "maden"){
-
-            window.location.replace(
-                "maden.html"
-            );
-
-            return;
-
-        }
-
-
-        /*
-        Finish bölümündeysek
-        Finish'e git.
-        */
-
-        if(savedPage === "devam"){
-
-            window.location.replace(
-                "devam.html"
-            );
-
-            return;
-
-        }
-
-
-        /*
-        Hikâyedeysek
-        kaldığımız videoyu aç.
-        */
-
-        startScreen.style.display =
-        "none";
-
-        game.style.display =
-        "block";
-
-
-        try{
-
-            if(
+            if (
                 document.documentElement
-                .requestFullscreen
-            ){
+                    .requestFullscreen
+            ) {
 
                 await document
-                .documentElement
-                .requestFullscreen();
+                    .documentElement
+                    .requestFullscreen();
 
             }
 
         }
-        catch(error){
+
+        catch(error) {
 
             console.log(
                 "Tam ekran açılamadı."
@@ -817,28 +726,7 @@ startButton.addEventListener(
         }
 
 
-        let savedVideo =
-        Number(
-            localStorage.getItem(
-                "oyunVideosu"
-            )
-        );
-
-
-        if(
-            !savedVideo ||
-            savedVideo < 1 ||
-            savedVideo > totalVideos
-        ){
-
-            savedVideo = 1;
-
-        }
-
-
-        loadVideo(
-            savedVideo
-        );
+        loadVideo(1);
 
     }
 );
@@ -850,28 +738,30 @@ startButton.addEventListener(
 
 video.addEventListener(
     "ended",
-    function(){
+    function() {
 
         video.pause();
 
-        endScreen.style.display =
-        "flex";
+        endScreen.style.display = "flex";
 
         endTitle.textContent =
-        "Sahne " +
-        currentVideo +
-        " tamamlandı";
+            "Sahne " +
+            currentVideo +
+            " tamamlandı";
+
 
         repeatButton.textContent =
-        "🔁 TEKRARLA";
+            "🔁 TEKRARLA";
+
 
         nextButton.textContent =
-        "➡ " +
-        (
-            nextTexts[currentVideo]
-            ||
-            "İLERLE"
-        );
+            "➡ " +
+            (
+                nextTexts[currentVideo]
+                ||
+                "İLERLE"
+            );
+
 
         lockButtons();
 
@@ -885,16 +775,15 @@ video.addEventListener(
 
 repeatButton.addEventListener(
     "click",
-    function(){
+    function() {
 
-        if(buttonsLocked){
+        if (buttonsLocked) {
 
             return;
 
         }
 
-        endScreen.style.display =
-        "none";
+        endScreen.style.display = "none";
 
         video.currentTime = 0;
 
@@ -910,9 +799,9 @@ repeatButton.addEventListener(
 
 nextButton.addEventListener(
     "click",
-    function(){
+    function() {
 
-        if(buttonsLocked){
+        if (buttonsLocked) {
 
             return;
 
@@ -920,29 +809,26 @@ nextButton.addEventListener(
 
 
         /*
-        5. video bittiyse
-        maden bölümüne geç.
+        5. VİDEODAN SONRA
+        6.mp4 YOK.
+
+        Bunun yerine maden.html açılır.
         */
 
-        if(currentVideo === 5){
+        if (currentVideo === totalVideos) {
 
-            localStorage.setItem(
-                "oyunSayfasi",
-                "maden"
-            );
-
-            localStorage.removeItem(
-                "oyunVideosu"
-            );
-
-            window.location.replace(
-                "maden.html"
-            );
+            window.location.href =
+                "maden.html";
 
             return;
 
         }
 
+
+        /*
+        5'ten önceki videolarda
+        normal şekilde devam et.
+        */
 
         loadVideo(
             currentVideo + 1
@@ -953,23 +839,25 @@ nextButton.addEventListener(
 
 
 /* =====================================================
-   KONTROLLERİ ENGELLE
+   VİDEO KONTROLLERİ
 ===================================================== */
 
 video.controls = false;
 
+
 video.addEventListener(
     "contextmenu",
-    function(event){
+    function(event) {
 
         event.preventDefault();
 
     }
 );
 
+
 video.addEventListener(
     "click",
-    function(event){
+    function(event) {
 
         event.preventDefault();
 
@@ -983,15 +871,17 @@ video.addEventListener(
 
 document.addEventListener(
     "keydown",
-    function(event){
+    function(event) {
 
-        if(event.code === "Space"){
+        if (
+            event.code === "Space"
+        ) {
 
             event.preventDefault();
 
         }
 
-        if(
+        if (
 
             event.code === "ArrowLeft" ||
 
@@ -1001,7 +891,7 @@ document.addEventListener(
 
             event.code === "ArrowDown"
 
-        ){
+        ) {
 
             event.preventDefault();
 
@@ -1012,27 +902,25 @@ document.addEventListener(
 
 
 /* =====================================================
-   VİDEO DURURSA
+   VİDEO DURURSA OYNAT
 ===================================================== */
 
 video.addEventListener(
     "pause",
-    function(){
+    function() {
 
-        if(
+        if (
 
             !video.ended &&
 
-            game.style.display !==
-            "none" &&
+            game.style.display !== "none" &&
 
-            endScreen.style.display !==
-            "flex"
+            endScreen.style.display !== "flex"
 
-        ){
+        ) {
 
             video.play().catch(
-                function(){}
+                function() {}
             );
 
         }
@@ -1042,29 +930,27 @@ video.addEventListener(
 
 
 /* =====================================================
-   UYGULAMAYA GERİ DÖNÜLDÜ
+   SAYFAYA GERİ DÖNÜLDÜĞÜNDE
 ===================================================== */
 
 document.addEventListener(
     "visibilitychange",
-    function(){
+    function() {
 
-        if(
+        if (
 
             !document.hidden &&
 
-            game.style.display !==
-            "none" &&
+            game.style.display !== "none" &&
 
             !video.ended &&
 
-            endScreen.style.display !==
-            "flex"
+            endScreen.style.display !== "flex"
 
-        ){
+        ) {
 
             video.play().catch(
-                function(){}
+                function() {}
             );
 
         }
