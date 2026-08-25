@@ -1,22 +1,569 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Finish</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+body{
+
+    width:100%;
+    height:100vh;
+
+    overflow:hidden;
+
+    font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+    background:
+    radial-gradient(
+        circle at 50% 35%,
+        #263b57 0%,
+        #111827 45%,
+        #05070b 100%
+    );
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+.background{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+}
+
+.light{
+
+    position:absolute;
+
+    width:350px;
+
+    height:350px;
+
+    border-radius:50%;
+
+    filter:blur(100px);
+
+    opacity:.25;
+
+    animation:
+    float 6s ease-in-out infinite;
+}
+
+.light.one{
+
+    background:#00e5ff;
+
+    top:-150px;
+
+    left:-100px;
+}
+
+.light.two{
+
+    background:#7c3aed;
+
+    bottom:-150px;
+
+    right:-100px;
+
+    animation-delay:2s;
+}
+
+@keyframes float{
+
+    0%,100%{
+        transform:translateY(0);
+    }
+
+    50%{
+        transform:translateY(30px);
+    }
+
+}
+
+.container{
+
+    position:relative;
+
+    z-index:2;
+
+    width:min(90%,520px);
+
+    padding:45px 30px;
+
+    text-align:center;
+
+    background:
+    rgba(255,255,255,.08);
+
+    border:
+    1px solid
+    rgba(255,255,255,.15);
+
+    border-radius:30px;
+
+    backdrop-filter:blur(20px);
+
+    -webkit-backdrop-filter:
+    blur(20px);
+
+    box-shadow:
+    0 25px 80px
+    rgba(0,0,0,.45),
+
+    inset 0 1px 0
+    rgba(255,255,255,.1);
+
+    animation:
+    appear .8s ease forwards;
+}
+
+@keyframes appear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+        scale(.8)
+        translateY(30px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+        scale(1)
+        translateY(0);
+
+    }
+
+}
+
+.check{
+
+    width:100px;
+
+    height:100px;
+
+    margin:
+    0 auto 25px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:
+    linear-gradient(
+        145deg,
+        #22c55e,
+        #16a34a
+    );
+
+    box-shadow:
+
+    0 0 0 10px
+    rgba(34,197,94,.08),
+
+    0 0 50px
+    rgba(34,197,94,.35);
+
+    animation:
+    checkPop
+    .8s
+    .2s
+    cubic-bezier(.17,.89,.32,1.4)
+    both;
+}
+
+.check::after{
+
+    content:"✓";
+
+    font-size:55px;
+
+    font-weight:bold;
+
+    color:white;
+}
+
+@keyframes checkPop{
+
+    from{
+        transform:scale(0);
+    }
+
+    to{
+        transform:scale(1);
+    }
+
+}
+
+h1{
+
+    font-size:
+    clamp(42px,10vw,68px);
+
+    letter-spacing:6px;
+
+    font-weight:900;
+
+    background:
+    linear-gradient(
+        90deg,
+        #ffffff,
+        #a7f3d0,
+        #ffffff
+    );
+
+    -webkit-background-clip:text;
+
+    -webkit-text-fill-color:
+    transparent;
+
+    animation:
+    titleIn
+    1s
+    .5s
+    both;
+}
+
+@keyframes titleIn{
+
+    from{
+
+        opacity:0;
+
+        letter-spacing:20px;
+
+    }
+
+    to{
+
+        opacity:1;
+
+        letter-spacing:6px;
+
+    }
+
+}
+
+.subtitle{
+
+    margin-top:15px;
+
+    color:
+    rgba(255,255,255,.7);
+
+    font-size:17px;
+
+    line-height:1.6;
+
+    animation:
+    fadeIn
+    1s
+    .8s
+    both;
+}
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+        transform:
+        translateY(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+        translateY(0);
+
+    }
+
+}
+
+button{
+
+    margin-top:32px;
+
+    width:100%;
+
+    max-width:280px;
+
+    height:58px;
+
+    border:none;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 10px 30px
+    rgba(34,197,94,.25);
+
+    transition:
+    transform .2s,
+    box-shadow .2s;
+}
+
+button:hover{
+
+    transform:
+    translateY(-3px);
+
+    box-shadow:
+    0 15px 40px
+    rgba(34,197,94,.4);
+}
+
+button:active{
+
+    transform:scale(.96);
+}
+
+.particle{
+
+    position:absolute;
+
+    width:5px;
+
+    height:5px;
+
+    background:white;
+
+    border-radius:50%;
+
+    opacity:.6;
+
+    animation:
+    particle 4s linear infinite;
+}
+
+@keyframes particle{
+
+    from{
+
+        transform:
+        translateY(100vh);
+
+        opacity:0;
+    }
+
+    20%{
+        opacity:.7;
+    }
+
+    80%{
+        opacity:.7;
+    }
+
+    to{
+
+        transform:
+        translateY(-20vh);
+
+        opacity:0;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .container{
+
+        padding:38px 22px;
+
+        border-radius:26px;
+
+    }
+
+    .check{
+
+        width:85px;
+
+        height:85px;
+
+    }
+
+    .check::after{
+
+        font-size:48px;
+
+    }
+
+    .subtitle{
+
+        font-size:15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="background">
+
+    <div class="light one"></div>
+
+    <div class="light two"></div>
+
+
+    <span
+        class="particle"
+        style="left:10%;animation-delay:0s">
+    </span>
+
+    <span
+        class="particle"
+        style="left:25%;animation-delay:1s">
+    </span>
+
+    <span
+        class="particle"
+        style="left:40%;animation-delay:2s">
+    </span>
+
+    <span
+        class="particle"
+        style="left:60%;animation-delay:.5s">
+    </span>
+
+    <span
+        class="particle"
+        style="left:75%;animation-delay:1.5s">
+    </span>
+
+    <span
+        class="particle"
+        style="left:90%;animation-delay:2.5s">
+    </span>
+
+</div>
+
+
+<div class="container">
+
+    <div class="check"></div>
+
+    <h1>
+        FINISH
+    </h1>
+
+    <p class="subtitle">
+
+        Görevi başarıyla tamamladın.<br>
+
+        Hazırsan yolculuğa devam edebilirsin.
+
+    </p>
+
+
+    <button onclick="devamEt()">
+
+        DEVAM ET
+
+    </button>
+
+</div>
+
+
 <script>
 
-function devamEt() {
+function devamEt(){
 
     /*
-    Oyunun bütün kayıtlarını temizle.
+    TÜM OYUN KAYITLARINI TEMİZLE
     */
 
-    localStorage.removeItem("oyunSayfasi");
-    localStorage.removeItem("oyunVideosu");
+    localStorage.removeItem(
+        "oyunSayfasi"
+    );
 
-    localStorage.removeItem("madenGold");
-    localStorage.removeItem("madenBroken");
-    localStorage.removeItem("madenFinished");
-    localStorage.removeItem("madenDestroyed");
+    localStorage.removeItem(
+        "oyunVideosu"
+    );
+
+    localStorage.removeItem(
+        "madenGold"
+    );
+
+    localStorage.removeItem(
+        "madenBroken"
+    );
+
+    localStorage.removeItem(
+        "madenFinished"
+    );
+
+    localStorage.removeItem(
+        "madenDestroyed"
+    );
 
 
     /*
-    Oyunu yeniden index.html'den başlat.
+    Baştan başla.
     */
 
     window.location.replace(
@@ -26,3 +573,7 @@ function devamEt() {
 }
 
 </script>
+
+</body>
+
+</html>
