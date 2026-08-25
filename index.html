@@ -1,0 +1,521 @@
+<script>
+/* =====================================================
+   AYARLAR
+===================================================== */
+
+const totalVideos = 5;
+
+
+/* =====================================================
+   KAYIT SİSTEMİ
+===================================================== */
+
+const savedPage = localStorage.getItem("sonSayfa");
+const savedVideo = Number(localStorage.getItem("sonVideo") || 1);
+
+
+/*
+Sayfa daha önce kaydedilmişse
+index.html açıldığında otomatik olarak
+kaldığı yere gönder.
+*/
+
+if (savedPage === "maden.html") {
+
+    window.location.replace("maden.html");
+
+}
+
+else if (savedPage === "devam.html") {
+
+    window.location.replace("devam.html");
+
+}
+
+
+/* =====================================================
+   VİDEO SONLARINDAKİ BUTON YAZILARI
+===================================================== */
+
+const nextTexts = {
+
+    1: "İLERLE",
+
+    2: "GEÇ",
+
+    3: "DAĞA ÇIK",
+
+    4: "KÖYE GİT",
+
+    5: "İLERLE"
+
+};
+
+
+/* =====================================================
+   ELEMENTLER
+===================================================== */
+
+const startScreen =
+    document.getElementById("startScreen");
+
+const startButton =
+    document.getElementById("startButton");
+
+const game =
+    document.getElementById("game");
+
+const video =
+    document.getElementById("video");
+
+const endScreen =
+    document.getElementById("endScreen");
+
+const endTitle =
+    document.getElementById("endTitle");
+
+const repeatButton =
+    document.getElementById("repeatButton");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+const repeatTimer =
+    document.getElementById("repeatTimer");
+
+const nextTimer =
+    document.getElementById("nextTimer");
+
+
+/* =====================================================
+   DEĞİŞKENLER
+===================================================== */
+
+let currentVideo = 1;
+
+let buttonsLocked = true;
+
+let timerID = null;
+
+
+/* =====================================================
+   VİDEO YÜKLE
+===================================================== */
+
+function loadVideo(number) {
+
+    currentVideo = number;
+
+    /*
+    Hangi videoda kaldığını kaydet.
+    */
+
+    localStorage.setItem(
+        "sonSayfa",
+        "index.html"
+    );
+
+    localStorage.setItem(
+        "sonVideo",
+        number
+    );
+
+
+    endScreen.style.display = "none";
+
+
+    if (timerID) {
+
+        clearTimeout(timerID);
+
+        timerID = null;
+
+    }
+
+
+    video.src =
+        number + ".mp4";
+
+    video.load();
+
+
+    video.play().catch(function(error) {
+
+        console.log(
+            "Video başlatılamadı:",
+            error
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   BUTONLARI KİLİTLE
+===================================================== */
+
+function lockButtons() {
+
+    buttonsLocked = true;
+
+    repeatButton.disabled = true;
+
+    nextButton.disabled = true;
+
+    repeatButton.classList.remove("active");
+
+    nextButton.classList.remove("active");
+
+    repeatTimer.classList.remove("counting");
+
+    nextTimer.classList.remove("counting");
+
+    repeatTimer.style.width = "0%";
+
+    nextTimer.style.width = "0%";
+
+    void repeatTimer.offsetWidth;
+
+    void nextTimer.offsetWidth;
+
+    repeatTimer.classList.add("counting");
+
+    nextTimer.classList.add("counting");
+
+    timerID = setTimeout(function() {
+
+        unlockButtons();
+
+    }, 10000);
+
+}
+
+
+/* =====================================================
+   BUTONLARI AÇ
+===================================================== */
+
+function unlockButtons() {
+
+    buttonsLocked = false;
+
+    repeatButton.disabled = false;
+
+    nextButton.disabled = false;
+
+    repeatButton.classList.add("active");
+
+    nextButton.classList.add("active");
+
+    repeatTimer.classList.remove("counting");
+
+    nextTimer.classList.remove("counting");
+
+    repeatTimer.style.width = "100%";
+
+    nextTimer.style.width = "100%";
+
+}
+
+
+/* =====================================================
+   HİKÂYEYİ BAŞLAT
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    async function() {
+
+        startScreen.style.display =
+            "none";
+
+        game.style.display =
+            "block";
+
+        try {
+
+            if (
+                document.documentElement
+                    .requestFullscreen
+            ) {
+
+                await document
+                    .documentElement
+                    .requestFullscreen();
+
+            }
+
+        }
+
+        catch(error) {
+
+            console.log(
+                "Tam ekran açılamadı."
+            );
+
+        }
+
+
+        /*
+        Daha önce kaldığı video varsa
+        oradan devam et.
+        */
+
+        let videoToStart =
+            Number(
+                localStorage.getItem(
+                    "sonVideo"
+                )
+            ) || 1;
+
+
+        if (
+            videoToStart < 1 ||
+            videoToStart > totalVideos
+        ) {
+
+            videoToStart = 1;
+
+        }
+
+
+        loadVideo(videoToStart);
+
+    }
+);
+
+
+/* =====================================================
+   VİDEO BİTTİ
+===================================================== */
+
+video.addEventListener(
+    "ended",
+    function() {
+
+        video.pause();
+
+        endScreen.style.display =
+            "flex";
+
+        endTitle.textContent =
+            "Sahne " +
+            currentVideo +
+            " tamamlandı";
+
+        repeatButton.textContent =
+            "🔁 TEKRARLA";
+
+        nextButton.textContent =
+            "➡ " +
+            (
+                nextTexts[currentVideo]
+                ||
+                "İLERLE"
+            );
+
+        lockButtons();
+
+    }
+);
+
+
+/* =====================================================
+   TEKRARLA
+===================================================== */
+
+repeatButton.addEventListener(
+    "click",
+    function() {
+
+        if (buttonsLocked) {
+
+            return;
+
+        }
+
+        endScreen.style.display =
+            "none";
+
+        video.currentTime = 0;
+
+        video.play();
+
+    }
+);
+
+
+/* =====================================================
+   İLERLE / SEÇENEK
+===================================================== */
+
+nextButton.addEventListener(
+    "click",
+    function() {
+
+        if (buttonsLocked) {
+
+            return;
+
+        }
+
+
+        /*
+        5. video bittiyse
+        artık 6.mp4 yok.
+
+        Doğrudan maden.html'e git.
+        */
+
+        if (currentVideo === 5) {
+
+            localStorage.setItem(
+                "sonSayfa",
+                "maden.html"
+            );
+
+            localStorage.removeItem(
+                "sonVideo"
+            );
+
+            window.location.replace(
+                "maden.html"
+            );
+
+            return;
+
+        }
+
+
+        loadVideo(
+            currentVideo + 1
+        );
+
+    }
+);
+
+
+/* =====================================================
+   VİDEO KONTROLLERİ
+===================================================== */
+
+video.controls = false;
+
+video.addEventListener(
+    "contextmenu",
+    function(event) {
+
+        event.preventDefault();
+
+    }
+);
+
+video.addEventListener(
+    "click",
+    function(event) {
+
+        event.preventDefault();
+
+    }
+);
+
+
+/* =====================================================
+   KLAVYE
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.code === "Space"
+        ) {
+
+            event.preventDefault();
+
+        }
+
+        if (
+
+            event.code === "ArrowLeft" ||
+
+            event.code === "ArrowRight" ||
+
+            event.code === "ArrowUp" ||
+
+            event.code === "ArrowDown"
+
+        ) {
+
+            event.preventDefault();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   VİDEO DURURSA
+===================================================== */
+
+video.addEventListener(
+    "pause",
+    function() {
+
+        if (
+
+            !video.ended &&
+
+            game.style.display !==
+                "none" &&
+
+            endScreen.style.display !==
+                "flex"
+
+        ) {
+
+            video.play().catch(
+                function() {}
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SAYFAYA GERİ DÖNÜLDÜĞÜNDE
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    function() {
+
+        if (
+
+            !document.hidden &&
+
+            game.style.display !==
+                "none" &&
+
+            !video.ended &&
+
+            endScreen.style.display !==
+                "flex"
+
+        ) {
+
+            video.play().catch(
+                function() {}
+            );
+
+        }
+
+    }
+);
+
+</script>
