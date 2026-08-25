@@ -3,18 +3,11 @@
 function devamEt() {
 
     /*
-    Yeni bir oyun/hikâye başlangıcı.
-    Eski sayfa kaydını temizle.
+    Oyunun bütün kayıtlarını temizle.
     */
 
-    localStorage.removeItem("sonSayfa");
-    localStorage.removeItem("sonVideo");
-
-    /*
-    Maden kayıtlarını da temizle.
-    Böylece yeni oyunda maden
-    sıfırdan başlar.
-    */
+    localStorage.removeItem("oyunSayfasi");
+    localStorage.removeItem("oyunVideosu");
 
     localStorage.removeItem("madenGold");
     localStorage.removeItem("madenBroken");
@@ -23,7 +16,7 @@ function devamEt() {
 
 
     /*
-    Index.html'yi aç.
+    Oyunu yeniden index.html'den başlat.
     */
 
     window.location.replace(
