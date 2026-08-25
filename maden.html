@@ -1,78 +1,965 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Madencilik</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    user-select:none;
+    -webkit-user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#15100c;
+    font-family:Arial,sans-serif;
+    touch-action:none;
+}
+
+#game{
+    width:100vw;
+    height:100vh;
+    position:relative;
+    overflow:hidden;
+    background:#2b2119;
+}
+
+#top{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:52px;
+    background:linear-gradient(#292929,#151515);
+    border-bottom:2px solid #050505;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:5px 14px;
+    z-index:20;
+}
+
+.logo{
+    color:white;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.stats{
+    display:flex;
+    gap:7px;
+}
+
+.stat{
+    color:white;
+    background:#303030;
+    border:1px solid #505050;
+    border-radius:8px;
+    padding:6px 10px;
+    font-size:13px;
+}
+
+#mine{
+    position:absolute;
+    left:0;
+    right:0;
+    top:52px;
+    bottom:50px;
+    overflow:hidden;
+    background:#302219;
+}
+
+#surface{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:38px;
+    background:
+    repeating-linear-gradient(
+        45deg,
+        #624025 0px,
+        #624025 8px,
+        #724a2b 8px,
+        #724a2b 16px
+    );
+    border-bottom:5px solid #392619;
+}
+
+#grass{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:8px;
+    background:#4d8c32;
+}
+
+#grid{
+    position:absolute;
+    left:50%;
+    top:38px;
+    transform:translateX(-50%);
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(10,min(7.1vh,7.1vw));
+
+    grid-template-rows:
+    repeat(6,min(7.1vh,7.1vw));
+
+    gap:2px;
+}
+
+.block{
+    width:min(7.1vh,7.1vw);
+    height:min(7.1vh,7.1vw);
+
+    position:relative;
+    overflow:hidden;
+
+    border:2px solid rgba(0,0,0,.45);
+    border-radius:3px;
+
+    cursor:pointer;
+
+    transition:transform .08s;
+}
+
+.block:active{
+    transform:scale(.91);
+}
+
+.stone{
+    background:
+    radial-gradient(circle at 20% 30%,#999 3px,transparent 4px),
+    radial-gradient(circle at 70% 60%,#555 4px,transparent 5px),
+    radial-gradient(circle at 40% 80%,#777 3px,transparent 4px),
+    #626262;
+}
+
+.coal{
+    background:
+    radial-gradient(circle at 20% 25%,#111 6px,transparent 7px),
+    radial-gradient(circle at 70% 70%,#181818 7px,transparent 8px),
+    #686868;
+}
+
+.iron{
+    background:
+    radial-gradient(circle at 25% 30%,#bd7657 5px,transparent 6px),
+    radial-gradient(circle at 70% 70%,#a75d43 6px,transparent 7px),
+    #6b6b6b;
+}
+
+.dirt{
+    background:
+    radial-gradient(circle at 20% 30%,#765032 2px,transparent 3px),
+    radial-gradient(circle at 70% 70%,#54351f 3px,transparent 4px),
+    #68452b;
+}
+
+.gold{
+    background:
+    radial-gradient(circle at 20% 25%,#ffe45c 6px,transparent 7px),
+    radial-gradient(circle at 70% 65%,#ffc400 7px,transparent 8px),
+    radial-gradient(circle at 45% 80%,#ffdf45 4px,transparent 5px),
+    #696969;
+
+    box-shadow:
+    inset 0 0 14px rgba(255,210,0,.5);
+}
+
+.block.hidden::before{
+    content:"";
+    position:absolute;
+    inset:0;
+
+    background:
+    linear-gradient(
+        135deg,
+        #51483f,
+        #62564c
+    );
+
+    z-index:5;
+
+    transition:opacity .28s;
+}
+
+.block.reveal1::before{
+    opacity:.80;
+}
+
+.block.reveal2::before{
+    opacity:.55;
+}
+
+.block.reveal3::before{
+    opacity:.28;
+}
+
+.block.reveal4::before{
+    opacity:0;
+}
+
+.crack{
+    position:absolute;
+    inset:0;
+    z-index:8;
+    opacity:0;
+    pointer-events:none;
+}
+
+.crack:before{
+    content:"";
+    position:absolute;
+    width:90%;
+    height:2px;
+    background:#111;
+    left:5%;
+    top:48%;
+    transform:rotate(27deg);
+}
+
+.crack:after{
+    content:"";
+    position:absolute;
+    width:80%;
+    height:2px;
+    background:#111;
+    left:10%;
+    top:55%;
+    transform:rotate(-35deg);
+}
+
+.crack2{
+    position:absolute;
+    width:2px;
+    height:55%;
+    background:#111;
+    left:49%;
+    top:20%;
+    transform:rotate(18deg);
+    z-index:9;
+    opacity:0;
+}
+
+.mining{
+    animation:shake .09s infinite alternate;
+}
+
+@keyframes shake{
+
+    from{
+        transform:rotate(-1.5deg) scale(.98);
+    }
+
+    to{
+        transform:rotate(1.5deg) scale(1);
+    }
+
+}
+
+.destroy{
+    animation:destroy .3s forwards;
+}
+
+@keyframes destroy{
+
+    0%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(.1);
+        opacity:0;
+    }
+
+}
+
+.breakbar{
+    position:absolute;
+    left:8%;
+    right:8%;
+    bottom:7%;
+    height:5px;
+    background:#111;
+    border-radius:5px;
+    z-index:15;
+    opacity:0;
+}
+
+.breakfill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ffd000,#ff8c00);
+    transition:width .12s;
+}
+
+#bottom{
+    position:absolute;
+    left:0;
+    bottom:0;
+    width:100%;
+    height:50px;
+
+    background:#191919;
+    border-top:2px solid #050505;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    z-index:20;
+}
+
+#bottomContent{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.pickaxe{
+    font-size:29px;
+}
+
+.pickaxe.hit{
+    transform:rotate(-35deg);
+}
+
+.progressArea{
+    width:180px;
+}
+
+.progressText{
+    color:white;
+    font-size:11px;
+    text-align:center;
+    margin-bottom:3px;
+}
+
+.progress{
+    height:8px;
+    width:100%;
+    background:#333;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.progressFill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#ffd000,#ff8c00);
+    transition:width .25s;
+}
+
+.particle{
+    position:fixed;
+    z-index:100;
+    pointer-events:none;
+    font-size:16px;
+    animation:particle .5s forwards;
+}
+
+@keyframes particle{
+
+    0%{
+        transform:translate(0,0) scale(1);
+        opacity:1;
+    }
+
+    100%{
+        transform:
+        translate(var(--x),var(--y))
+        scale(.2);
+
+        opacity:0;
+    }
+
+}
+
+#win{
+    position:absolute;
+    inset:0;
+
+    z-index:300;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    text-align:center;
+
+    background:
+    radial-gradient(
+        circle,
+        rgba(255,190,0,.25),
+        rgba(0,0,0,.95) 65%
+    );
+
+    opacity:0;
+    visibility:hidden;
+}
+
+#win.show{
+    visibility:visible;
+    animation:winFade .8s forwards;
+}
+
+@keyframes winFade{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+
+}
+
+.winBox{
+    transform:scale(.4);
+    opacity:0;
+}
+
+#win.show .winBox{
+    animation:winBox .8s .2s forwards;
+}
+
+@keyframes winBox{
+
+    0%{
+        transform:scale(.4) rotate(-8deg);
+        opacity:0;
+    }
+
+    60%{
+        transform:scale(1.12) rotate(2deg);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(1) rotate(0deg);
+        opacity:1;
+    }
+
+}
+
+.winIcon{
+    font-size:75px;
+    animation:trophy 1s infinite alternate;
+}
+
+@keyframes trophy{
+
+    from{
+        transform:translateY(0) rotate(-5deg);
+    }
+
+    to{
+        transform:translateY(-10px) rotate(5deg);
+    }
+
+}
+
+.winTitle{
+    color:#ffd000;
+    font-size:38px;
+    font-weight:900;
+
+    text-shadow:
+    0 0 10px #ffae00,
+    0 0 25px rgba(255,174,0,.8);
+}
+
+.winText{
+    color:white;
+    font-size:18px;
+    margin-top:10px;
+}
+
+.winSub{
+    color:#bbb;
+    font-size:13px;
+    margin-top:7px;
+}
+
+#continueButton{
+    margin-top:25px;
+
+    padding:13px 38px;
+
+    border:none;
+    border-radius:12px;
+
+    background:linear-gradient(
+        #ffd52a,
+        #e99d00
+    );
+
+    color:#171717;
+
+    font-size:19px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    box-shadow:0 5px 0 #986600;
+
+    opacity:0;
+}
+
+#win.show #continueButton{
+
+    animation:
+    buttonAppear
+    .5s
+    1s
+    forwards;
+}
+
+@keyframes buttonAppear{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+#continueButton:active{
+
+    transform:translateY(4px);
+
+    box-shadow:
+    0 1px 0 #986600;
+}
+
+.goldSpark{
+    position:absolute;
+    width:7px;
+    height:7px;
+    background:#fff3a0;
+    border-radius:50%;
+    pointer-events:none;
+    animation:spark 1s forwards;
+}
+
+@keyframes spark{
+
+    0%{
+        transform:scale(0);
+        opacity:1;
+    }
+
+    50%{
+        transform:scale(1.5);
+        opacity:1;
+    }
+
+    100%{
+        transform:
+        scale(0)
+        translateY(-30px);
+
+        opacity:0;
+    }
+
+}
+
+#rotate{
+
+    display:none;
+
+    position:fixed;
+    inset:0;
+
+    z-index:999;
+
+    background:#111;
+
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+}
+
+#rotate div{
+
+    color:white;
+    font-size:22px;
+    line-height:1.5;
+}
+
+@media(orientation:portrait) and (max-width:700px){
+
+    #rotate{
+        display:flex;
+    }
+
+}
+
+@media(max-height:400px){
+
+    #top{
+        height:43px;
+    }
+
+    #mine{
+        top:43px;
+        bottom:42px;
+    }
+
+    #bottom{
+        height:42px;
+    }
+
+    #surface{
+        height:30px;
+    }
+
+    #grid{
+        top:30px;
+    }
+
+    .logo{
+        font-size:16px;
+    }
+
+    .stat{
+        padding:4px 7px;
+        font-size:11px;
+    }
+
+    .progressArea{
+        width:150px;
+    }
+
+    .pickaxe{
+        font-size:25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div id="game">
+
+    <div id="top">
+
+        <div class="logo">
+            ⛏️ MADEN
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                ❤️ 100
+            </div>
+
+            <div class="stat">
+                ⛏️ <span id="blocks">0</span>
+            </div>
+
+            <div class="stat">
+                🪙 <span id="gold">0</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="mine">
+
+        <div id="world">
+
+            <div id="surface">
+
+                <div id="grass"></div>
+
+            </div>
+
+            <div id="grid"></div>
+
+        </div>
+
+    </div>
+
+
+    <div id="bottom">
+
+        <div id="bottomContent">
+
+            <div
+                class="pickaxe"
+                id="pickaxe">
+
+                ⛏️
+
+            </div>
+
+            <div class="progressArea">
+
+                <div class="progressText">
+
+                    🪙 Altın:
+
+                    <b>
+
+                        <span id="goldText">
+                            0 / 8
+                        </span>
+
+                    </b>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        id="progressFill"
+                        class="progressFill">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="win">
+
+        <div class="winBox">
+
+            <div class="winIcon">
+                🏆
+            </div>
+
+            <div class="winTitle">
+                KAZANDINIZ!
+            </div>
+
+            <div class="winText">
+                8 altının tamamını buldunuz!
+            </div>
+
+            <div class="winSub">
+                Maceraya devam etmek için ilerleyin.
+            </div>
+
+            <button
+                id="continueButton"
+                onclick="continueGame()">
+
+                İLERLE ➜
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div id="rotate">
+
+    <div>
+
+        📱<br>
+
+        Oyunu oynayabilmek için<br>
+
+        telefonu yatay çevir.
+
+    </div>
+
+</div>
+
+
 <script>
 
-/*
-==================================================
-KESİN HARİTA
-==================================================
-*/
+
+/* =====================================================
+   KESİN HARİTA
+===================================================== */
 
 const map = [
 
-    "dirt","dirt","dirt","dirt","dirt",
-    "dirt","dirt","dirt","dirt","dirt",
+"dirt","dirt","dirt","dirt","dirt",
+"dirt","dirt","dirt","dirt","dirt",
 
-    "stone","stone","coal","stone","stone",
-    "iron","gold","coal","stone","stone",
+"stone","stone","coal","stone","stone",
+"iron","gold","coal","stone","stone",
 
-    "stone","coal","stone","iron","gold",
-    "stone","stone","coal","stone","iron",
+"stone","coal","stone","iron","gold",
+"stone","stone","coal","stone","iron",
 
-    "stone","gold","stone","coal","stone",
-    "stone","gold","stone","coal","iron",
+"stone","gold","stone","coal","stone",
+"stone","gold","stone","coal","iron",
 
-    "stone","stone","gold","stone","gold",
-    "coal","stone","iron","stone","stone",
+"stone","stone","gold","stone","gold",
+"coal","stone","iron","stone","stone",
 
-    "coal","gold","iron","stone","stone",
-    "coal","stone","gold","stone","iron"
+"coal","gold","iron","stone","stone",
+"coal","stone","gold","stone","iron"
 
 ];
 
 
-/*
-==================================================
-ALTIN KONTROLÜ
-==================================================
-*/
+/* =====================================================
+   ALTIN KONTROLÜ
+===================================================== */
 
 const TOTAL_GOLD = 8;
 
 const goldCount =
-    map.filter(
-        item => item === "gold"
-    ).length;
+map.filter(
+    item => item === "gold"
+).length;
 
 if(goldCount !== 8){
 
     document.body.innerHTML = `
-        <div style="
-            width:100vw;
-            height:100vh;
-            background:#111;
-            color:white;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-family:Arial;
-            text-align:center;
-            font-size:22px;
-        ">
-            Harita hatası!<br>
-            Altın sayısı 8 olmalı.
-        </div>
+    
+    <div style="
+        width:100vw;
+        height:100vh;
+        background:#111;
+        color:white;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-family:Arial;
+        text-align:center;
+        font-size:22px;
+    ">
+
+        Harita hatası!<br>
+        Altın sayısı 8 olmalı.
+
+    </div>
+    
     `;
 
     throw new Error(
         "Haritada tam 8 altın bulunmalı."
     );
+
+}
+
+
+/* =====================================================
+   KAYIT
+===================================================== */
+
+/*
+maden bölümüne geldiğimizi kaydet.
+*/
+
+localStorage.setItem(
+    "oyunSayfasi",
+    "maden"
+);
+
+
+/*
+Önceki kayıtları oku.
+*/
+
+let savedGold =
+Number(
+    localStorage.getItem(
+        "madenGold"
+    ) || 0
+);
+
+
+let savedBroken =
+Number(
+    localStorage.getItem(
+        "madenBroken"
+    ) || 0
+);
+
+
+let savedDestroyed;
+
+try{
+
+    savedDestroyed =
+    JSON.parse(
+        localStorage.getItem(
+            "madenDestroyed"
+        ) || "[]"
+    );
+
+    if(!Array.isArray(savedDestroyed)){
+
+        savedDestroyed = [];
+
+    }
+
+}
+catch(error){
+
+    savedDestroyed = [];
+
 }
 
 
 /*
-==================================================
-MADEN ÖZELLİKLERİ
-==================================================
+Geçersiz kayıtları temizle.
 */
+
+savedDestroyed =
+savedDestroyed.filter(
+    index =>
+    Number.isInteger(index) &&
+    index >= 0 &&
+    index < map.length
+);
+
+
+/* =====================================================
+   MADEN ÖZELLİKLERİ
+===================================================== */
 
 const resources = {
 
@@ -105,129 +992,114 @@ const resources = {
 
 
 const grid =
-    document.getElementById("grid");
-
-
-/*
-==================================================
-KAYITLI VERİLERİ AL
-==================================================
-*/
-
-let gold =
-    Number(
-        localStorage.getItem(
-            "madenGold"
-        )
-    ) || 0;
-
-
-let broken =
-    Number(
-        localStorage.getItem(
-            "madenBroken"
-        )
-    ) || 0;
-
-
-let finished =
-    localStorage.getItem(
-        "madenFinished"
-    ) === "true";
-
-
-let destroyedBlocks =
-    JSON.parse(
-        localStorage.getItem(
-            "madenDestroyed"
-        ) || "[]"
-    );
-
-
-/*
-Maden sayfasındayız.
-*/
-
-localStorage.setItem(
-    "sonSayfa",
-    "maden.html"
+document.getElementById(
+    "grid"
 );
 
 
+let gold =
+Math.min(
+    savedGold,
+    TOTAL_GOLD
+);
+
+
+let broken =
+Math.min(
+    savedBroken,
+    map.length
+);
+
+
+let finished =
+gold >= TOTAL_GOLD;
+
+
 /*
-==================================================
-KAYDET
-==================================================
+Kırılmış blokları Set olarak tut.
 */
+
+const destroyedSet =
+new Set(
+    savedDestroyed
+);
+
+
+/* =====================================================
+   KAYDET
+===================================================== */
 
 function saveMine(){
 
     localStorage.setItem(
+        "oyunSayfasi",
+        "maden"
+    );
+
+    localStorage.setItem(
         "madenGold",
-        gold
+        String(gold)
     );
 
     localStorage.setItem(
         "madenBroken",
-        broken
-    );
-
-    localStorage.setItem(
-        "madenFinished",
-        finished
+        String(broken)
     );
 
     localStorage.setItem(
         "madenDestroyed",
         JSON.stringify(
-            destroyedBlocks
+            Array.from(destroyedSet)
         )
+    );
+
+    localStorage.setItem(
+        "madenFinished",
+        finished
+        ? "1"
+        : "0"
     );
 
 }
 
 
-/*
-==================================================
-EKRAN BİLGİLERİ
-==================================================
-*/
+/* =====================================================
+   ARAYÜZÜ GÜNCELLE
+===================================================== */
 
-function updateStats(){
+function updateUI(){
 
     document.getElementById(
         "blocks"
     ).textContent =
-        broken;
+    broken;
 
 
     document.getElementById(
         "gold"
     ).textContent =
-        gold;
+    gold;
 
 
     document.getElementById(
         "goldText"
     ).textContent =
-        gold + " / 8";
+    gold + " / " + TOTAL_GOLD;
 
 
     document.getElementById(
         "progressFill"
     ).style.width =
-        (
-            gold / 8 * 100
-        ) + "%";
+    (
+        gold / TOTAL_GOLD * 100
+    ) + "%";
 
 }
 
 
-/*
-==================================================
-DÜNYAYI OLUŞTUR
-==================================================
-*/
+/* =====================================================
+   DÜNYAYI OLUŞTUR
+===================================================== */
 
 function createWorld(){
 
@@ -238,104 +1110,94 @@ function createWorld(){
         (type,index)=>{
 
             const block =
-                document.createElement(
-                    "div"
-                );
+            document.createElement(
+                "div"
+            );
 
 
             block.className =
-                "block " +
-                type +
-                " hidden";
+            "block " +
+            type +
+            " hidden";
 
 
             block.dataset.type =
-                type;
+            type;
 
 
             block.dataset.hp =
-                resources[type].hp;
+            resources[type].hp;
 
 
             block.dataset.max =
-                resources[type].hp;
+            resources[type].hp;
 
 
             /*
             Daha önce kırılmışsa
-            tekrar oluşturma.
+            direkt gizle.
             */
 
             if(
-                destroyedBlocks.includes(
-                    index
-                )
+                destroyedSet.has(index)
             ){
+
+                block.classList.remove(
+                    "hidden"
+                );
 
                 block.classList.add(
                     "destroyed"
                 );
 
                 block.style.visibility =
-                    "hidden";
+                "hidden";
 
             }
 
 
-            /*
-            ÇATLAK
-            */
-
             const crack =
-                document.createElement(
-                    "div"
-                );
+            document.createElement(
+                "div"
+            );
 
             crack.className =
-                "crack";
+            "crack";
 
             block.appendChild(
                 crack
             );
 
 
-            /*
-            İKİNCİ ÇATLAK
-            */
-
             const crack2 =
-                document.createElement(
-                    "div"
-                );
+            document.createElement(
+                "div"
+            );
 
             crack2.className =
-                "crack2";
+            "crack2";
 
             block.appendChild(
                 crack2
             );
 
 
-            /*
-            KIRILMA BAR
-            */
-
             const bar =
-                document.createElement(
-                    "div"
-                );
+            document.createElement(
+                "div"
+            );
 
             bar.className =
-                "breakbar";
+            "breakbar";
 
 
             const fill =
-                document.createElement(
-                    "div"
-                );
+            document.createElement(
+                "div"
+            );
 
             fill.className =
-                "breakfill";
+            "breakfill";
 
 
             bar.appendChild(
@@ -353,7 +1215,10 @@ function createWorld(){
 
                     e.preventDefault();
 
-                    mine(block);
+                    mine(
+                        block,
+                        index
+                    );
 
                 }
             );
@@ -366,19 +1231,17 @@ function createWorld(){
         }
     );
 
-
-    updateStats();
-
 }
 
 
-/*
-==================================================
-KAZ
-==================================================
-*/
+/* =====================================================
+   KAZ
+===================================================== */
 
-function mine(block){
+function mine(
+    block,
+    index
+){
 
     if(finished)
         return;
@@ -393,25 +1256,25 @@ function mine(block){
 
 
     let hp =
-        Number(
-            block.dataset.hp
-        );
+    Number(
+        block.dataset.hp
+    );
 
 
     const max =
-        Number(
-            block.dataset.max
-        );
+    Number(
+        block.dataset.max
+    );
 
 
     const type =
-        block.dataset.type;
+    block.dataset.type;
 
 
     hp--;
 
     block.dataset.hp =
-        hp;
+    hp;
 
 
     block.classList.add(
@@ -420,27 +1283,27 @@ function mine(block){
 
 
     const percent =
-        ((max-hp)/max)*100;
+    ((max-hp)/max)*100;
 
 
     const bar =
-        block.querySelector(
-            ".breakbar"
-        );
+    block.querySelector(
+        ".breakbar"
+    );
 
 
     const fill =
-        block.querySelector(
-            ".breakfill"
-        );
+    block.querySelector(
+        ".breakfill"
+    );
 
 
     bar.style.opacity =
-        "1";
+    "1";
 
 
     fill.style.width =
-        percent + "%";
+    percent + "%";
 
 
     if(percent >= 15){
@@ -492,29 +1355,29 @@ function mine(block){
 
 
     const crack =
-        block.querySelector(
-            ".crack"
-        );
+    block.querySelector(
+        ".crack"
+    );
 
 
     const crack2 =
-        block.querySelector(
-            ".crack2"
-        );
+    block.querySelector(
+        ".crack2"
+    );
 
 
     crack.style.opacity =
-        Math.min(
-            1,
-            percent / 50
-        );
+    Math.min(
+        1,
+        percent / 50
+    );
 
 
     crack2.style.opacity =
-        Math.max(
-            0,
-            (percent - 40) / 50
-        );
+    Math.max(
+        0,
+        (percent - 40) / 50
+    );
 
 
     swingPickaxe();
@@ -526,15 +1389,19 @@ function mine(block){
     );
 
 
+    /*
+    KIRILDI
+    */
+
     if(hp <= 0){
 
         destroyBlock(
             block,
-            type
+            type,
+            index
         );
 
     }
-
     else{
 
         setTimeout(
@@ -553,15 +1420,14 @@ function mine(block){
 }
 
 
-/*
-==================================================
-BLOK KIR
-==================================================
-*/
+/* =====================================================
+   BLOK KIR
+===================================================== */
 
 function destroyBlock(
     block,
-    type
+    type,
+    index
 ){
 
     block.classList.remove(
@@ -582,44 +1448,16 @@ function destroyBlock(
     broken++;
 
 
-    /*
-    BLOĞUN INDEX'İNİ BUL
-    */
-
-    const allBlocks =
-        Array.from(
-            grid.children
-        );
-
-
-    const index =
-        allBlocks.indexOf(
-            block
-        );
-
-
-    if(
-        !destroyedBlocks.includes(
-            index
-        )
-    ){
-
-        destroyedBlocks.push(
-            index
-        );
-
-    }
+    destroyedSet.add(
+        index
+    );
 
 
     document.getElementById(
         "blocks"
     ).textContent =
-        broken;
+    broken;
 
-
-    /*
-    ALTIN
-    */
 
     if(type === "gold"){
 
@@ -629,28 +1467,30 @@ function destroyBlock(
         document.getElementById(
             "gold"
         ).textContent =
-            gold;
+        gold;
 
 
         document.getElementById(
             "goldText"
         ).textContent =
-            gold + " / 8";
+        gold + " / 8";
 
 
         document.getElementById(
             "progressFill"
         ).style.width =
-            (
-                gold / 8 * 100
-            ) + "%";
+        (
+            gold / 8 * 100
+        ) + "%";
 
 
         if(gold === 8){
 
             finished = true;
 
+
             saveMine();
+
 
             victoryEffect();
 
@@ -666,7 +1506,7 @@ function destroyBlock(
 
 
     /*
-    Her kırmada kaydet.
+    Her kırılan bloktan sonra kaydet.
     */
 
     saveMine();
@@ -676,7 +1516,7 @@ function destroyBlock(
         ()=>{
 
             block.style.visibility =
-                "hidden";
+            "hidden";
 
         },
         300
@@ -685,18 +1525,16 @@ function destroyBlock(
 }
 
 
-/*
-==================================================
-KAZMA ANİMASYONU
-==================================================
-*/
+/* =====================================================
+   KAZMA ANİMASYONU
+===================================================== */
 
 function swingPickaxe(){
 
     const pickaxe =
-        document.getElementById(
-            "pickaxe"
-        );
+    document.getElementById(
+        "pickaxe"
+    );
 
 
     pickaxe.classList.add(
@@ -718,11 +1556,9 @@ function swingPickaxe(){
 }
 
 
-/*
-==================================================
-PARÇACIK
-==================================================
-*/
+/* =====================================================
+   PARÇACIK
+===================================================== */
 
 function createParticles(
     block,
@@ -730,7 +1566,7 @@ function createParticles(
 ){
 
     const rect =
-        block.getBoundingClientRect();
+    block.getBoundingClientRect();
 
 
     for(
@@ -740,31 +1576,31 @@ function createParticles(
     ){
 
         const particle =
-            document.createElement(
-                "div"
-            );
+        document.createElement(
+            "div"
+        );
 
 
         particle.className =
-            "particle";
+        "particle";
 
 
         particle.textContent =
-            emoji;
+        emoji;
 
 
         particle.style.left =
-            (
-                rect.left +
-                rect.width / 2
-            ) + "px";
+        (
+            rect.left +
+            rect.width / 2
+        ) + "px";
 
 
         particle.style.top =
-            (
-                rect.top +
-                rect.height / 2
-            ) + "px";
+        (
+            rect.top +
+            rect.height / 2
+        ) + "px";
 
 
         particle.style.setProperty(
@@ -790,9 +1626,7 @@ function createParticles(
 
         setTimeout(
             ()=>{
-
                 particle.remove();
-
             },
             500
         );
@@ -802,11 +1636,9 @@ function createParticles(
 }
 
 
-/*
-==================================================
-KAZANMA PARILTILARI
-==================================================
-*/
+/* =====================================================
+   KAZANMA PARILTILARI
+===================================================== */
 
 function victoryEffect(){
 
@@ -820,21 +1652,21 @@ function victoryEffect(){
             ()=>{
 
                 const spark =
-                    document.createElement(
-                        "div"
-                    );
+                document.createElement(
+                    "div"
+                );
 
 
                 spark.className =
-                    "goldSpark";
+                "goldSpark";
 
 
                 spark.style.left =
-                    Math.random()*100 + "vw";
+                Math.random()*100 + "vw";
 
 
                 spark.style.top =
-                    Math.random()*100 + "vh";
+                Math.random()*100 + "vh";
 
 
                 document.getElementById(
@@ -846,9 +1678,7 @@ function victoryEffect(){
 
                 setTimeout(
                     ()=>{
-
                         spark.remove();
-
                     },
                     1000
                 );
@@ -862,16 +1692,20 @@ function victoryEffect(){
 }
 
 
-/*
-==================================================
-KAZANILDI
-==================================================
-*/
+/* =====================================================
+   KAZANILDI
+===================================================== */
 
 function showWin(){
 
     if(gold !== 8)
         return;
+
+
+    finished = true;
+
+
+    saveMine();
 
 
     document.getElementById(
@@ -883,30 +1717,19 @@ function showWin(){
 }
 
 
-/*
-==================================================
-İLERLE
-==================================================
-*/
+/* =====================================================
+   İLERLE
+===================================================== */
 
 function continueGame(){
 
     /*
-    Maden tamamlandı.
-    Artık geri dönünce devam.html açılacak.
+    Finish ekranına geldiğimizi kaydet.
     */
 
-    finished = true;
-
     localStorage.setItem(
-        "madenFinished",
-        "true"
-    );
-
-
-    localStorage.setItem(
-        "sonSayfa",
-        "devam.html"
+        "oyunSayfasi",
+        "devam"
     );
 
 
@@ -917,30 +1740,32 @@ function continueGame(){
 }
 
 
-/*
-==================================================
-BAŞLAT
-==================================================
-*/
+/* =====================================================
+   BAŞLAT
+===================================================== */
 
 createWorld();
 
+updateUI();
+
 
 /*
-Eğer oyun zaten tamamlandıysa
-kazanma ekranını göster.
+Eğer daha önce 8 altın bulunmuşsa
+kazanma ekranını tekrar göster.
 */
 
-if(
-    finished &&
-    gold === 8
-){
+if(gold >= TOTAL_GOLD){
+
+    finished = true;
 
     setTimeout(
         showWin,
-        100
+        300
     );
 
 }
 
 </script>
+
+</body>
+</html>
