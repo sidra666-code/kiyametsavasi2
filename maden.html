@@ -1,0 +1,946 @@
+<script>
+
+/*
+==================================================
+KESİN HARİTA
+==================================================
+*/
+
+const map = [
+
+    "dirt","dirt","dirt","dirt","dirt",
+    "dirt","dirt","dirt","dirt","dirt",
+
+    "stone","stone","coal","stone","stone",
+    "iron","gold","coal","stone","stone",
+
+    "stone","coal","stone","iron","gold",
+    "stone","stone","coal","stone","iron",
+
+    "stone","gold","stone","coal","stone",
+    "stone","gold","stone","coal","iron",
+
+    "stone","stone","gold","stone","gold",
+    "coal","stone","iron","stone","stone",
+
+    "coal","gold","iron","stone","stone",
+    "coal","stone","gold","stone","iron"
+
+];
+
+
+/*
+==================================================
+ALTIN KONTROLÜ
+==================================================
+*/
+
+const TOTAL_GOLD = 8;
+
+const goldCount =
+    map.filter(
+        item => item === "gold"
+    ).length;
+
+if(goldCount !== 8){
+
+    document.body.innerHTML = `
+        <div style="
+            width:100vw;
+            height:100vh;
+            background:#111;
+            color:white;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-family:Arial;
+            text-align:center;
+            font-size:22px;
+        ">
+            Harita hatası!<br>
+            Altın sayısı 8 olmalı.
+        </div>
+    `;
+
+    throw new Error(
+        "Haritada tam 8 altın bulunmalı."
+    );
+}
+
+
+/*
+==================================================
+MADEN ÖZELLİKLERİ
+==================================================
+*/
+
+const resources = {
+
+    dirt:{
+        hp:2,
+        emoji:"🟫"
+    },
+
+    stone:{
+        hp:4,
+        emoji:"🪨"
+    },
+
+    coal:{
+        hp:4,
+        emoji:"⚫"
+    },
+
+    iron:{
+        hp:5,
+        emoji:"🔩"
+    },
+
+    gold:{
+        hp:7,
+        emoji:"🪙"
+    }
+
+};
+
+
+const grid =
+    document.getElementById("grid");
+
+
+/*
+==================================================
+KAYITLI VERİLERİ AL
+==================================================
+*/
+
+let gold =
+    Number(
+        localStorage.getItem(
+            "madenGold"
+        )
+    ) || 0;
+
+
+let broken =
+    Number(
+        localStorage.getItem(
+            "madenBroken"
+        )
+    ) || 0;
+
+
+let finished =
+    localStorage.getItem(
+        "madenFinished"
+    ) === "true";
+
+
+let destroyedBlocks =
+    JSON.parse(
+        localStorage.getItem(
+            "madenDestroyed"
+        ) || "[]"
+    );
+
+
+/*
+Maden sayfasındayız.
+*/
+
+localStorage.setItem(
+    "sonSayfa",
+    "maden.html"
+);
+
+
+/*
+==================================================
+KAYDET
+==================================================
+*/
+
+function saveMine(){
+
+    localStorage.setItem(
+        "madenGold",
+        gold
+    );
+
+    localStorage.setItem(
+        "madenBroken",
+        broken
+    );
+
+    localStorage.setItem(
+        "madenFinished",
+        finished
+    );
+
+    localStorage.setItem(
+        "madenDestroyed",
+        JSON.stringify(
+            destroyedBlocks
+        )
+    );
+
+}
+
+
+/*
+==================================================
+EKRAN BİLGİLERİ
+==================================================
+*/
+
+function updateStats(){
+
+    document.getElementById(
+        "blocks"
+    ).textContent =
+        broken;
+
+
+    document.getElementById(
+        "gold"
+    ).textContent =
+        gold;
+
+
+    document.getElementById(
+        "goldText"
+    ).textContent =
+        gold + " / 8";
+
+
+    document.getElementById(
+        "progressFill"
+    ).style.width =
+        (
+            gold / 8 * 100
+        ) + "%";
+
+}
+
+
+/*
+==================================================
+DÜNYAYI OLUŞTUR
+==================================================
+*/
+
+function createWorld(){
+
+    grid.innerHTML = "";
+
+
+    map.forEach(
+        (type,index)=>{
+
+            const block =
+                document.createElement(
+                    "div"
+                );
+
+
+            block.className =
+                "block " +
+                type +
+                " hidden";
+
+
+            block.dataset.type =
+                type;
+
+
+            block.dataset.hp =
+                resources[type].hp;
+
+
+            block.dataset.max =
+                resources[type].hp;
+
+
+            /*
+            Daha önce kırılmışsa
+            tekrar oluşturma.
+            */
+
+            if(
+                destroyedBlocks.includes(
+                    index
+                )
+            ){
+
+                block.classList.add(
+                    "destroyed"
+                );
+
+                block.style.visibility =
+                    "hidden";
+
+            }
+
+
+            /*
+            ÇATLAK
+            */
+
+            const crack =
+                document.createElement(
+                    "div"
+                );
+
+            crack.className =
+                "crack";
+
+            block.appendChild(
+                crack
+            );
+
+
+            /*
+            İKİNCİ ÇATLAK
+            */
+
+            const crack2 =
+                document.createElement(
+                    "div"
+                );
+
+            crack2.className =
+                "crack2";
+
+            block.appendChild(
+                crack2
+            );
+
+
+            /*
+            KIRILMA BAR
+            */
+
+            const bar =
+                document.createElement(
+                    "div"
+                );
+
+            bar.className =
+                "breakbar";
+
+
+            const fill =
+                document.createElement(
+                    "div"
+                );
+
+            fill.className =
+                "breakfill";
+
+
+            bar.appendChild(
+                fill
+            );
+
+            block.appendChild(
+                bar
+            );
+
+
+            block.addEventListener(
+                "pointerdown",
+                function(e){
+
+                    e.preventDefault();
+
+                    mine(block);
+
+                }
+            );
+
+
+            grid.appendChild(
+                block
+            );
+
+        }
+    );
+
+
+    updateStats();
+
+}
+
+
+/*
+==================================================
+KAZ
+==================================================
+*/
+
+function mine(block){
+
+    if(finished)
+        return;
+
+
+    if(
+        block.classList.contains(
+            "destroyed"
+        )
+    )
+        return;
+
+
+    let hp =
+        Number(
+            block.dataset.hp
+        );
+
+
+    const max =
+        Number(
+            block.dataset.max
+        );
+
+
+    const type =
+        block.dataset.type;
+
+
+    hp--;
+
+    block.dataset.hp =
+        hp;
+
+
+    block.classList.add(
+        "mining"
+    );
+
+
+    const percent =
+        ((max-hp)/max)*100;
+
+
+    const bar =
+        block.querySelector(
+            ".breakbar"
+        );
+
+
+    const fill =
+        block.querySelector(
+            ".breakfill"
+        );
+
+
+    bar.style.opacity =
+        "1";
+
+
+    fill.style.width =
+        percent + "%";
+
+
+    if(percent >= 15){
+
+        block.classList.add(
+            "reveal1"
+        );
+
+    }
+
+
+    if(percent >= 35){
+
+        block.classList.remove(
+            "reveal1"
+        );
+
+        block.classList.add(
+            "reveal2"
+        );
+
+    }
+
+
+    if(percent >= 60){
+
+        block.classList.remove(
+            "reveal2"
+        );
+
+        block.classList.add(
+            "reveal3"
+        );
+
+    }
+
+
+    if(percent >= 82){
+
+        block.classList.remove(
+            "reveal3"
+        );
+
+        block.classList.add(
+            "reveal4"
+        );
+
+    }
+
+
+    const crack =
+        block.querySelector(
+            ".crack"
+        );
+
+
+    const crack2 =
+        block.querySelector(
+            ".crack2"
+        );
+
+
+    crack.style.opacity =
+        Math.min(
+            1,
+            percent / 50
+        );
+
+
+    crack2.style.opacity =
+        Math.max(
+            0,
+            (percent - 40) / 50
+        );
+
+
+    swingPickaxe();
+
+
+    createParticles(
+        block,
+        resources[type].emoji
+    );
+
+
+    if(hp <= 0){
+
+        destroyBlock(
+            block,
+            type
+        );
+
+    }
+
+    else{
+
+        setTimeout(
+            ()=>{
+
+                block.classList.remove(
+                    "mining"
+                );
+
+            },
+            100
+        );
+
+    }
+
+}
+
+
+/*
+==================================================
+BLOK KIR
+==================================================
+*/
+
+function destroyBlock(
+    block,
+    type
+){
+
+    block.classList.remove(
+        "mining"
+    );
+
+
+    block.classList.add(
+        "destroy"
+    );
+
+
+    block.classList.add(
+        "destroyed"
+    );
+
+
+    broken++;
+
+
+    /*
+    BLOĞUN INDEX'İNİ BUL
+    */
+
+    const allBlocks =
+        Array.from(
+            grid.children
+        );
+
+
+    const index =
+        allBlocks.indexOf(
+            block
+        );
+
+
+    if(
+        !destroyedBlocks.includes(
+            index
+        )
+    ){
+
+        destroyedBlocks.push(
+            index
+        );
+
+    }
+
+
+    document.getElementById(
+        "blocks"
+    ).textContent =
+        broken;
+
+
+    /*
+    ALTIN
+    */
+
+    if(type === "gold"){
+
+        gold++;
+
+
+        document.getElementById(
+            "gold"
+        ).textContent =
+            gold;
+
+
+        document.getElementById(
+            "goldText"
+        ).textContent =
+            gold + " / 8";
+
+
+        document.getElementById(
+            "progressFill"
+        ).style.width =
+            (
+                gold / 8 * 100
+            ) + "%";
+
+
+        if(gold === 8){
+
+            finished = true;
+
+            saveMine();
+
+            victoryEffect();
+
+
+            setTimeout(
+                showWin,
+                1000
+            );
+
+        }
+
+    }
+
+
+    /*
+    Her kırmada kaydet.
+    */
+
+    saveMine();
+
+
+    setTimeout(
+        ()=>{
+
+            block.style.visibility =
+                "hidden";
+
+        },
+        300
+    );
+
+}
+
+
+/*
+==================================================
+KAZMA ANİMASYONU
+==================================================
+*/
+
+function swingPickaxe(){
+
+    const pickaxe =
+        document.getElementById(
+            "pickaxe"
+        );
+
+
+    pickaxe.classList.add(
+        "hit"
+    );
+
+
+    setTimeout(
+        ()=>{
+
+            pickaxe.classList.remove(
+                "hit"
+            );
+
+        },
+        100
+    );
+
+}
+
+
+/*
+==================================================
+PARÇACIK
+==================================================
+*/
+
+function createParticles(
+    block,
+    emoji
+){
+
+    const rect =
+        block.getBoundingClientRect();
+
+
+    for(
+        let i=0;
+        i<2;
+        i++
+    ){
+
+        const particle =
+            document.createElement(
+                "div"
+            );
+
+
+        particle.className =
+            "particle";
+
+
+        particle.textContent =
+            emoji;
+
+
+        particle.style.left =
+            (
+                rect.left +
+                rect.width / 2
+            ) + "px";
+
+
+        particle.style.top =
+            (
+                rect.top +
+                rect.height / 2
+            ) + "px";
+
+
+        particle.style.setProperty(
+            "--x",
+            (
+                Math.random()*60 - 30
+            ) + "px"
+        );
+
+
+        particle.style.setProperty(
+            "--y",
+            (
+                Math.random()*60 - 40
+            ) + "px"
+        );
+
+
+        document.body.appendChild(
+            particle
+        );
+
+
+        setTimeout(
+            ()=>{
+
+                particle.remove();
+
+            },
+            500
+        );
+
+    }
+
+}
+
+
+/*
+==================================================
+KAZANMA PARILTILARI
+==================================================
+*/
+
+function victoryEffect(){
+
+    for(
+        let i=0;
+        i<45;
+        i++
+    ){
+
+        setTimeout(
+            ()=>{
+
+                const spark =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                spark.className =
+                    "goldSpark";
+
+
+                spark.style.left =
+                    Math.random()*100 + "vw";
+
+
+                spark.style.top =
+                    Math.random()*100 + "vh";
+
+
+                document.getElementById(
+                    "game"
+                ).appendChild(
+                    spark
+                );
+
+
+                setTimeout(
+                    ()=>{
+
+                        spark.remove();
+
+                    },
+                    1000
+                );
+
+            },
+            i * 30
+        );
+
+    }
+
+}
+
+
+/*
+==================================================
+KAZANILDI
+==================================================
+*/
+
+function showWin(){
+
+    if(gold !== 8)
+        return;
+
+
+    document.getElementById(
+        "win"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/*
+==================================================
+İLERLE
+==================================================
+*/
+
+function continueGame(){
+
+    /*
+    Maden tamamlandı.
+    Artık geri dönünce devam.html açılacak.
+    */
+
+    finished = true;
+
+    localStorage.setItem(
+        "madenFinished",
+        "true"
+    );
+
+
+    localStorage.setItem(
+        "sonSayfa",
+        "devam.html"
+    );
+
+
+    window.location.replace(
+        "devam.html"
+    );
+
+}
+
+
+/*
+==================================================
+BAŞLAT
+==================================================
+*/
+
+createWorld();
+
+
+/*
+Eğer oyun zaten tamamlandıysa
+kazanma ekranını göster.
+*/
+
+if(
+    finished &&
+    gold === 8
+){
+
+    setTimeout(
+        showWin,
+        100
+    );
+
+}
+
+</script>
