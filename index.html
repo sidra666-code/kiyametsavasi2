@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -58,7 +60,8 @@ body {
 
     color: white;
 
-    font-size: clamp(28px, 6vw, 70px);
+    font-size:
+        clamp(28px, 6vw, 70px);
 
     font-weight: 700;
 
@@ -76,9 +79,11 @@ body {
 
     border-radius: 14px;
 
-    border: 1px solid rgba(255,255,255,.3);
+    border:
+        1px solid rgba(255,255,255,.3);
 
-    background: rgba(255,255,255,.08);
+    background:
+        rgba(255,255,255,.08);
 
     color: white;
 
@@ -99,7 +104,8 @@ body {
 
     transform: scale(1.05);
 
-    background: rgba(255,255,255,.15);
+    background:
+        rgba(255,255,255,.15);
 }
 
 .startButton:active {
@@ -148,7 +154,8 @@ body {
 
     flex-direction: column;
 
-    background: rgba(0,0,0,.45);
+    background:
+        rgba(0,0,0,.45);
 
     backdrop-filter: blur(4px);
 
@@ -159,7 +166,8 @@ body {
 
     color: white;
 
-    font-size: clamp(20px, 4vw, 42px);
+    font-size:
+        clamp(20px, 4vw, 42px);
 
     font-weight: bold;
 
@@ -206,11 +214,13 @@ body {
 
     border-radius: 10px;
 
-    border: 1px solid rgba(255,255,255,.25);
+    border:
+        1px solid rgba(255,255,255,.25);
 
     color: white;
 
-    background: rgba(255,255,255,.10);
+    background:
+        rgba(255,255,255,.10);
 
     backdrop-filter: blur(15px);
 
@@ -231,7 +241,8 @@ body {
 
     opacity: 1;
 
-    background: rgba(255,255,255,.18);
+    background:
+        rgba(255,255,255,.18);
 
     transform: scale(1.02);
 }
@@ -247,7 +258,8 @@ body {
 
     height: 4px;
 
-    background: rgba(255,255,255,.18);
+    background:
+        rgba(255,255,255,.18);
 
     border-radius: 10px;
 
@@ -394,7 +406,9 @@ body {
 }
 
 </style>
+
 </head>
+
 
 <body>
 
@@ -416,6 +430,7 @@ body {
 </div>
 
 
+
 <div id="startScreen">
 
     <div class="title">
@@ -431,6 +446,7 @@ body {
     </button>
 
 </div>
+
 
 
 <div id="game">
@@ -458,6 +474,7 @@ body {
 
         <div class="buttons">
 
+
             <div class="actionWrapper">
 
                 <button
@@ -479,6 +496,7 @@ body {
                 </div>
 
             </div>
+
 
 
             <div class="actionWrapper">
@@ -503,6 +521,7 @@ body {
 
             </div>
 
+
         </div>
 
     </div>
@@ -510,71 +529,14 @@ body {
 </div>
 
 
+
 <script>
 
 /* =====================================================
-   KAYIT SİSTEMİ
+   AYARLAR
 ===================================================== */
 
-function saveData(key, value) {
-
-    try {
-
-        localStorage.setItem(
-            key,
-            JSON.stringify(value)
-        );
-
-    }
-
-    catch(error) {
-
-        console.log(
-            "Kayıt yapılamadı:",
-            error
-        );
-
-    }
-
-}
-
-
-function loadData(key, defaultValue) {
-
-    try {
-
-        const data =
-            localStorage.getItem(key);
-
-        if(data === null) {
-
-            return defaultValue;
-
-        }
-
-        return JSON.parse(data);
-
-    }
-
-    catch(error) {
-
-        console.log(
-            "Kayıt okunamadı:",
-            error
-        );
-
-        return defaultValue;
-
-    }
-
-}
-
-
-/* =====================================================
-   TOPLAM VİDEO
-===================================================== */
-
-const totalVideos = 5;
+const totalVideos = 7;
 
 
 /* =====================================================
@@ -591,9 +553,57 @@ const nextTexts = {
 
     4: "KÖYE GİT",
 
-    5: "İLERLE"
+    5: "İLERLE",
+
+    6: "MADENCİLİK YAP",
+
+    7: "YARDIM ET"
 
 };
+
+
+/* =====================================================
+   LOCALSTORAGE
+===================================================== */
+
+/*
+    Oyuncunun kaldığı video burada tutulur.
+
+    Örnek:
+
+    5 = 5.mp4
+    6 = 6.mp4
+    7 = 7.mp4
+*/
+
+const SAVE_KEY =
+    "hikaye_current_video";
+
+
+/*
+    Eğer daha önce kayıt varsa
+    kayıtlı videoyu al.
+
+    Yoksa 1. videodan başla.
+*/
+
+let savedVideo =
+    parseInt(
+        localStorage.getItem(
+            SAVE_KEY
+        )
+    );
+
+
+if (
+    isNaN(savedVideo) ||
+    savedVideo < 1 ||
+    savedVideo > totalVideos
+) {
+
+    savedVideo = 1;
+
+}
 
 
 /* =====================================================
@@ -601,105 +611,89 @@ const nextTexts = {
 ===================================================== */
 
 const startScreen =
-    document.getElementById("startScreen");
+    document.getElementById(
+        "startScreen"
+    );
+
 
 const startButton =
-    document.getElementById("startButton");
+    document.getElementById(
+        "startButton"
+    );
+
 
 const game =
-    document.getElementById("game");
+    document.getElementById(
+        "game"
+    );
+
 
 const video =
-    document.getElementById("video");
+    document.getElementById(
+        "video"
+    );
+
 
 const endScreen =
-    document.getElementById("endScreen");
+    document.getElementById(
+        "endScreen"
+    );
+
 
 const endTitle =
-    document.getElementById("endTitle");
+    document.getElementById(
+        "endTitle"
+    );
+
 
 const repeatButton =
-    document.getElementById("repeatButton");
+    document.getElementById(
+        "repeatButton"
+    );
+
 
 const nextButton =
-    document.getElementById("nextButton");
+    document.getElementById(
+        "nextButton"
+    );
+
 
 const repeatTimer =
-    document.getElementById("repeatTimer");
+    document.getElementById(
+        "repeatTimer"
+    );
+
 
 const nextTimer =
-    document.getElementById("nextTimer");
+    document.getElementById(
+        "nextTimer"
+    );
 
 
 /* =====================================================
    DEĞİŞKENLER
 ===================================================== */
 
-let currentVideo = 1;
+let currentVideo =
+    savedVideo;
 
-let buttonsLocked = true;
+let buttonsLocked =
+    true;
 
-let timerID = null;
-
-
-/* =====================================================
-   KAYITLI KONUMU KONTROL ET
-===================================================== */
-
-const savedPage =
-    localStorage.getItem(
-        "oyun_sayfasi"
-    );
-
-
-/*
-Eğer kullanıcı daha önce
-madene geçmişse direkt maden.html
-açılır.
-*/
-
-if(savedPage === "maden") {
-
-    window.location.replace(
-        "maden.html"
-    );
-
-}
-
-
-/*
-Eğer finish sayfasında kaldıysa
-finish sayfasını aç.
-*/
-
-if(savedPage === "devam") {
-
-    window.location.replace(
-        "devam.html"
-    );
-
-}
+let timerID =
+    null;
 
 
 /* =====================================================
-   KAYITLI VİDEO
+   KAYDET
 ===================================================== */
 
-const savedVideo =
-    Number(
-        localStorage.getItem(
-            "oyun_video"
-        )
+function saveProgress(number) {
+
+    localStorage.setItem(
+        SAVE_KEY,
+        String(number)
     );
-
-
-if(
-    savedVideo >= 1 &&
-    savedVideo <= totalVideos
-) {
-
-    currentVideo =
-        savedVideo;
 
 }
 
@@ -710,42 +704,69 @@ if(
 
 function loadVideo(number) {
 
-    currentVideo = number;
+    /*
+        7'den daha ileri video yok.
+    */
+
+    if (
+        number < 1 ||
+        number > totalVideos
+    ) {
+
+        return;
+
+    }
+
+
+    currentVideo =
+        number;
 
 
     /*
-    HANGİ VİDEODA OLDUĞUMUZU KAYDET
+        İLERLEMEYİ HEMEN KAYDET
     */
 
-    localStorage.setItem(
-        "oyun_sayfasi",
-        "index"
-    );
-
-    localStorage.setItem(
-        "oyun_video",
+    saveProgress(
         number
     );
 
+
+    /*
+        Bitiş ekranını kapat
+    */
 
     endScreen.style.display =
         "none";
 
 
-    if(timerID) {
+    /*
+        Timer temizle
+    */
 
-        clearTimeout(timerID);
+    if (timerID) {
+
+        clearTimeout(
+            timerID
+        );
 
         timerID = null;
 
     }
 
 
+    /*
+        Videoyu yükle
+    */
+
     video.src =
         number + ".mp4";
 
     video.load();
 
+
+    /*
+        Oynat
+    */
 
     video.play().catch(
         function(error) {
@@ -767,11 +788,16 @@ function loadVideo(number) {
 
 function lockButtons() {
 
-    buttonsLocked = true;
+    buttonsLocked =
+        true;
 
-    repeatButton.disabled = true;
 
-    nextButton.disabled = true;
+    repeatButton.disabled =
+        true;
+
+    nextButton.disabled =
+        true;
+
 
     repeatButton.classList.remove(
         "active"
@@ -781,6 +807,7 @@ function lockButtons() {
         "active"
     );
 
+
     repeatTimer.classList.remove(
         "counting"
     );
@@ -789,15 +816,18 @@ function lockButtons() {
         "counting"
     );
 
+
     repeatTimer.style.width =
         "0%";
 
     nextTimer.style.width =
         "0%";
 
+
     void repeatTimer.offsetWidth;
 
     void nextTimer.offsetWidth;
+
 
     repeatTimer.classList.add(
         "counting"
@@ -827,11 +857,16 @@ function lockButtons() {
 
 function unlockButtons() {
 
-    buttonsLocked = false;
+    buttonsLocked =
+        false;
 
-    repeatButton.disabled = false;
 
-    nextButton.disabled = false;
+    repeatButton.disabled =
+        false;
+
+    nextButton.disabled =
+        false;
+
 
     repeatButton.classList.add(
         "active"
@@ -841,6 +876,7 @@ function unlockButtons() {
         "active"
     );
 
+
     repeatTimer.classList.remove(
         "counting"
     );
@@ -848,6 +884,7 @@ function unlockButtons() {
     nextTimer.classList.remove(
         "counting"
     );
+
 
     repeatTimer.style.width =
         "100%";
@@ -866,8 +903,10 @@ startButton.addEventListener(
     "click",
     async function() {
 
+
         startScreen.style.display =
             "none";
+
 
         game.style.display =
             "block";
@@ -875,8 +914,9 @@ startButton.addEventListener(
 
         try {
 
-            if(
-                document.documentElement
+            if (
+                document
+                    .documentElement
                     .requestFullscreen
             ) {
 
@@ -898,11 +938,11 @@ startButton.addEventListener(
 
 
         /*
-        KAYITLI VİDEODAN DEVAM
+            KAYITLI YERDEN BAŞLA
         */
 
         loadVideo(
-            currentVideo
+            savedVideo
         );
 
     }
@@ -917,10 +957,13 @@ video.addEventListener(
     "ended",
     function() {
 
+
         video.pause();
+
 
         endScreen.style.display =
             "flex";
+
 
         endTitle.textContent =
             "Sahne " +
@@ -932,13 +975,56 @@ video.addEventListener(
             "🔁 TEKRARLA";
 
 
-        nextButton.textContent =
-            "➡ " +
-            (
-                nextTexts[currentVideo]
-                ||
-                "İLERLE"
-            );
+        /*
+            6. video:
+
+            TEKRARLA
+            MADENCİLİK YAP
+
+        */
+
+        if (
+            currentVideo === 6
+        ) {
+
+            nextButton.textContent =
+                "⛏️ MADENCİLİK YAP";
+
+        }
+
+
+        /*
+            7. video:
+
+            TEKRARLA
+            YARDIM ET
+        */
+
+        else if (
+            currentVideo === 7
+        ) {
+
+            nextButton.textContent =
+                "🆘 YARDIM ET";
+
+        }
+
+
+        /*
+            Diğer videolar
+        */
+
+        else {
+
+            nextButton.textContent =
+                "➡ " +
+                (
+                    nextTexts[currentVideo]
+                    ||
+                    "İLERLE"
+                );
+
+        }
 
 
         lockButtons();
@@ -955,32 +1041,44 @@ repeatButton.addEventListener(
     "click",
     function() {
 
-        if(buttonsLocked) {
+
+        if (
+            buttonsLocked
+        ) {
 
             return;
 
         }
 
+
         endScreen.style.display =
             "none";
 
-        video.currentTime = 0;
 
-        video.play();
+        video.currentTime =
+            0;
+
+
+        video.play().catch(
+            function() {}
+        );
 
     }
 );
 
 
 /* =====================================================
-   İLERLE
+   İLERLE / ÖZEL BUTON
 ===================================================== */
 
 nextButton.addEventListener(
     "click",
     function() {
 
-        if(buttonsLocked) {
+
+        if (
+            buttonsLocked
+        ) {
 
             return;
 
@@ -988,28 +1086,28 @@ nextButton.addEventListener(
 
 
         /*
-        5. VİDEODAN SONRA MADEN
+        =================================================
+        6. VİDEO SONU
+        =================================================
+
+        MADENCİLİK YAP
+        → maden.html
         */
 
-        if(
-            currentVideo ===
-            totalVideos
+        if (
+            currentVideo === 6
         ) {
 
             /*
-            KONUMU KAYDET
+                7. bölüme geçileceğini kaydet.
             */
 
-            localStorage.setItem(
-                "oyun_sayfasi",
-                "maden"
-            );
+            saveProgress(7);
 
 
-            localStorage.removeItem(
-                "oyun_video"
-            );
-
+            /*
+                Madencilik ekranını aç.
+            */
 
             window.location.href =
                 "maden.html";
@@ -1020,22 +1118,65 @@ nextButton.addEventListener(
 
 
         /*
-        NORMAL SONRAKİ VİDEO
+        =================================================
+        7. VİDEO SONU
+        =================================================
+
+        YARDIM ET
+        → yardim.html
         */
 
-        loadVideo(
-            currentVideo + 1
-        );
+        if (
+            currentVideo === 7
+        ) {
+
+            /*
+                BURADAKİ DOSYA ADINI
+                KENDİ DOSYA ADINLA DEĞİŞTİR.
+            */
+
+            window.location.href =
+                "yardim.html";
+
+            return;
+
+        }
+
+
+        /*
+        =================================================
+        NORMAL SONRAKİ VİDEO
+        =================================================
+        */
+
+        const nextVideo =
+            currentVideo + 1;
+
+
+        if (
+            nextVideo <= totalVideos
+        ) {
+
+            saveProgress(
+                nextVideo
+            );
+
+            loadVideo(
+                nextVideo
+            );
+
+        }
 
     }
 );
 
 
 /* =====================================================
-   VİDEO KONTROLLERİ
+   VİDEO KONTROLLERİNİ ENGELLE
 ===================================================== */
 
-video.controls = false;
+video.controls =
+    false;
 
 
 video.addEventListener(
@@ -1066,7 +1207,8 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-        if(
+
+        if (
             event.code === "Space"
         ) {
 
@@ -1074,7 +1216,8 @@ document.addEventListener(
 
         }
 
-        if(
+
+        if (
 
             event.code === "ArrowLeft" ||
 
@@ -1095,14 +1238,15 @@ document.addEventListener(
 
 
 /* =====================================================
-   VİDEO DURURSA OYNAT
+   VİDEO DURURSA
 ===================================================== */
 
 video.addEventListener(
     "pause",
     function() {
 
-        if(
+
+        if (
 
             !video.ended &&
 
@@ -1125,14 +1269,15 @@ video.addEventListener(
 
 
 /* =====================================================
-   SAYFAYA GERİ DÖNÜLDÜĞÜNDE
+   SAYFAYA GERİ DÖNÜŞ
 ===================================================== */
 
 document.addEventListener(
     "visibilitychange",
     function() {
 
-        if(
+
+        if (
 
             !document.hidden &&
 
@@ -1158,4 +1303,5 @@ document.addEventListener(
 </script>
 
 </body>
+
 </html>
