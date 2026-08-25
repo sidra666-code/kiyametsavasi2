@@ -398,6 +398,7 @@ body {
 
 <body>
 
+
 <div id="rotateMessage">
 
     <div class="phoneIcon">
@@ -512,6 +513,64 @@ body {
 <script>
 
 /* =====================================================
+   KAYIT SİSTEMİ
+===================================================== */
+
+function saveData(key, value) {
+
+    try {
+
+        localStorage.setItem(
+            key,
+            JSON.stringify(value)
+        );
+
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kayıt yapılamadı:",
+            error
+        );
+
+    }
+
+}
+
+
+function loadData(key, defaultValue) {
+
+    try {
+
+        const data =
+            localStorage.getItem(key);
+
+        if(data === null) {
+
+            return defaultValue;
+
+        }
+
+        return JSON.parse(data);
+
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kayıt okunamadı:",
+            error
+        );
+
+        return defaultValue;
+
+    }
+
+}
+
+
+/* =====================================================
    TOPLAM VİDEO
 ===================================================== */
 
@@ -584,6 +643,68 @@ let timerID = null;
 
 
 /* =====================================================
+   KAYITLI KONUMU KONTROL ET
+===================================================== */
+
+const savedPage =
+    localStorage.getItem(
+        "oyun_sayfasi"
+    );
+
+
+/*
+Eğer kullanıcı daha önce
+madene geçmişse direkt maden.html
+açılır.
+*/
+
+if(savedPage === "maden") {
+
+    window.location.replace(
+        "maden.html"
+    );
+
+}
+
+
+/*
+Eğer finish sayfasında kaldıysa
+finish sayfasını aç.
+*/
+
+if(savedPage === "devam") {
+
+    window.location.replace(
+        "devam.html"
+    );
+
+}
+
+
+/* =====================================================
+   KAYITLI VİDEO
+===================================================== */
+
+const savedVideo =
+    Number(
+        localStorage.getItem(
+            "oyun_video"
+        )
+    );
+
+
+if(
+    savedVideo >= 1 &&
+    savedVideo <= totalVideos
+) {
+
+    currentVideo =
+        savedVideo;
+
+}
+
+
+/* =====================================================
    VİDEO YÜKLE
 ===================================================== */
 
@@ -591,10 +712,27 @@ function loadVideo(number) {
 
     currentVideo = number;
 
-    endScreen.style.display = "none";
+
+    /*
+    HANGİ VİDEODA OLDUĞUMUZU KAYDET
+    */
+
+    localStorage.setItem(
+        "oyun_sayfasi",
+        "index"
+    );
+
+    localStorage.setItem(
+        "oyun_video",
+        number
+    );
 
 
-    if (timerID) {
+    endScreen.style.display =
+        "none";
+
+
+    if(timerID) {
 
         clearTimeout(timerID);
 
@@ -603,19 +741,22 @@ function loadVideo(number) {
     }
 
 
-    video.src = number + ".mp4";
+    video.src =
+        number + ".mp4";
 
     video.load();
 
 
-    video.play().catch(function(error) {
+    video.play().catch(
+        function(error) {
 
-        console.log(
-            "Video başlatılamadı:",
-            error
-        );
+            console.log(
+                "Video başlatılamadı:",
+                error
+            );
 
-    });
+        }
+    );
 
 }
 
@@ -632,32 +773,50 @@ function lockButtons() {
 
     nextButton.disabled = true;
 
-    repeatButton.classList.remove("active");
+    repeatButton.classList.remove(
+        "active"
+    );
 
-    nextButton.classList.remove("active");
+    nextButton.classList.remove(
+        "active"
+    );
 
-    repeatTimer.classList.remove("counting");
+    repeatTimer.classList.remove(
+        "counting"
+    );
 
-    nextTimer.classList.remove("counting");
+    nextTimer.classList.remove(
+        "counting"
+    );
 
-    repeatTimer.style.width = "0%";
+    repeatTimer.style.width =
+        "0%";
 
-    nextTimer.style.width = "0%";
+    nextTimer.style.width =
+        "0%";
 
     void repeatTimer.offsetWidth;
 
     void nextTimer.offsetWidth;
 
-    repeatTimer.classList.add("counting");
+    repeatTimer.classList.add(
+        "counting"
+    );
 
-    nextTimer.classList.add("counting");
+    nextTimer.classList.add(
+        "counting"
+    );
 
 
-    timerID = setTimeout(function() {
+    timerID =
+        setTimeout(
+            function() {
 
-        unlockButtons();
+                unlockButtons();
 
-    }, 10000);
+            },
+            10000
+        );
 
 }
 
@@ -674,17 +833,27 @@ function unlockButtons() {
 
     nextButton.disabled = false;
 
-    repeatButton.classList.add("active");
+    repeatButton.classList.add(
+        "active"
+    );
 
-    nextButton.classList.add("active");
+    nextButton.classList.add(
+        "active"
+    );
 
-    repeatTimer.classList.remove("counting");
+    repeatTimer.classList.remove(
+        "counting"
+    );
 
-    nextTimer.classList.remove("counting");
+    nextTimer.classList.remove(
+        "counting"
+    );
 
-    repeatTimer.style.width = "100%";
+    repeatTimer.style.width =
+        "100%";
 
-    nextTimer.style.width = "100%";
+    nextTimer.style.width =
+        "100%";
 
 }
 
@@ -697,14 +866,16 @@ startButton.addEventListener(
     "click",
     async function() {
 
-        startScreen.style.display = "none";
+        startScreen.style.display =
+            "none";
 
-        game.style.display = "block";
+        game.style.display =
+            "block";
 
 
         try {
 
-            if (
+            if(
                 document.documentElement
                     .requestFullscreen
             ) {
@@ -726,7 +897,13 @@ startButton.addEventListener(
         }
 
 
-        loadVideo(1);
+        /*
+        KAYITLI VİDEODAN DEVAM
+        */
+
+        loadVideo(
+            currentVideo
+        );
 
     }
 );
@@ -742,7 +919,8 @@ video.addEventListener(
 
         video.pause();
 
-        endScreen.style.display = "flex";
+        endScreen.style.display =
+            "flex";
 
         endTitle.textContent =
             "Sahne " +
@@ -777,13 +955,14 @@ repeatButton.addEventListener(
     "click",
     function() {
 
-        if (buttonsLocked) {
+        if(buttonsLocked) {
 
             return;
 
         }
 
-        endScreen.style.display = "none";
+        endScreen.style.display =
+            "none";
 
         video.currentTime = 0;
 
@@ -801,7 +980,7 @@ nextButton.addEventListener(
     "click",
     function() {
 
-        if (buttonsLocked) {
+        if(buttonsLocked) {
 
             return;
 
@@ -809,13 +988,28 @@ nextButton.addEventListener(
 
 
         /*
-        5. VİDEODAN SONRA
-        6.mp4 YOK.
-
-        Bunun yerine maden.html açılır.
+        5. VİDEODAN SONRA MADEN
         */
 
-        if (currentVideo === totalVideos) {
+        if(
+            currentVideo ===
+            totalVideos
+        ) {
+
+            /*
+            KONUMU KAYDET
+            */
+
+            localStorage.setItem(
+                "oyun_sayfasi",
+                "maden"
+            );
+
+
+            localStorage.removeItem(
+                "oyun_video"
+            );
+
 
             window.location.href =
                 "maden.html";
@@ -826,8 +1020,7 @@ nextButton.addEventListener(
 
 
         /*
-        5'ten önceki videolarda
-        normal şekilde devam et.
+        NORMAL SONRAKİ VİDEO
         */
 
         loadVideo(
@@ -873,7 +1066,7 @@ document.addEventListener(
     "keydown",
     function(event) {
 
-        if (
+        if(
             event.code === "Space"
         ) {
 
@@ -881,7 +1074,7 @@ document.addEventListener(
 
         }
 
-        if (
+        if(
 
             event.code === "ArrowLeft" ||
 
@@ -909,13 +1102,15 @@ video.addEventListener(
     "pause",
     function() {
 
-        if (
+        if(
 
             !video.ended &&
 
-            game.style.display !== "none" &&
+            game.style.display !==
+                "none" &&
 
-            endScreen.style.display !== "flex"
+            endScreen.style.display !==
+                "flex"
 
         ) {
 
@@ -937,15 +1132,17 @@ document.addEventListener(
     "visibilitychange",
     function() {
 
-        if (
+        if(
 
             !document.hidden &&
 
-            game.style.display !== "none" &&
+            game.style.display !==
+                "none" &&
 
             !video.ended &&
 
-            endScreen.style.display !== "flex"
+            endScreen.style.display !==
+                "flex"
 
         ) {
 
