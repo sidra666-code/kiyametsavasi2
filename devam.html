@@ -1,718 +1,184 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport"
-      content="width=device-width,
-      initial-scale=1.0,
-      maximum-scale=1.0,
-      user-scalable=no">
+      content="width=device-width, initial-scale=1.0,
+               maximum-scale=1.0, user-scalable=no">
 
-<title>Finish</title>
-
+<title>Video</title>
 
 <style>
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
     -webkit-tap-highlight-color: transparent;
 }
 
-
-html,
-body {
-
+html, body {
     width: 100%;
     height: 100%;
-
     overflow: hidden;
+    background: #000;
+}
 
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        radial-gradient(
-            circle at 50% 35%,
-            #263b57 0%,
-            #111827 45%,
-            #05070b 100%
-        );
-
-    color: white;
-
+body {
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 }
 
+/* Video */
+video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 
-/* =====================================================
-   ARKA PLAN
-===================================================== */
-
-.background {
-
-    position: absolute;
-
-    inset: 0;
-
-    overflow: hidden;
-
+    /* Kontroller tamamen gizli */
     pointer-events: none;
 }
 
-
-.light {
-
-    position: absolute;
-
-    width: 350px;
-
-    height: 350px;
-
-    border-radius: 50%;
-
-    filter: blur(100px);
-
-    opacity: .25;
-
-    animation:
-        float 6s ease-in-out infinite;
-}
-
-
-.light.one {
-
-    background: #00e5ff;
-
-    top: -150px;
-
-    left: -100px;
-}
-
-
-.light.two {
-
-    background: #7c3aed;
-
-    bottom: -150px;
-
-    right: -100px;
-
-    animation-delay: 2s;
-}
-
-
-@keyframes float {
-
-    0%,
-    100% {
-
-        transform:
-            translateY(0);
-
-    }
-
-    50% {
-
-        transform:
-            translateY(30px);
-
-    }
-
-}
-
-
-/* =====================================================
-   PARÇACIKLAR
-===================================================== */
-
-.particle {
-
-    position: absolute;
-
-    width: 5px;
-
-    height: 5px;
-
-    background: white;
-
-    border-radius: 50%;
-
-    opacity: .6;
-
-    animation:
-        particle 4s linear infinite;
-}
-
-
-@keyframes particle {
-
-    from {
-
-        transform:
-            translateY(100vh);
-
-        opacity: 0;
-
-    }
-
-    20% {
-
-        opacity: .7;
-
-    }
-
-    80% {
-
-        opacity: .7;
-
-    }
-
-    to {
-
-        transform:
-            translateY(-20vh);
-
-        opacity: 0;
-
-    }
-
-}
-
-
-/* =====================================================
-   ANA KART
-===================================================== */
-
-.container {
-
-    position: relative;
-
-    z-index: 2;
-
-    width:
-        min(90%, 520px);
-
-    padding:
-        45px 30px;
-
-    text-align: center;
-
-    background:
-        rgba(255,255,255,.08);
-
-    border:
-        1px solid rgba(255,255,255,.15);
-
-    border-radius:
-        30px;
-
-    backdrop-filter:
-        blur(20px);
-
-    -webkit-backdrop-filter:
-        blur(20px);
-
-    box-shadow:
-
-        0 25px 80px
-        rgba(0,0,0,.45),
-
-        inset 0 1px 0
-        rgba(255,255,255,.1);
-
-    animation:
-        appear .8s ease forwards;
-}
-
-
-@keyframes appear {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            scale(.8)
-            translateY(30px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            scale(1)
-            translateY(0);
-
-    }
-
-}
-
-
-/* =====================================================
-   TİK
-===================================================== */
-
-.check {
-
-    width: 100px;
-
-    height: 100px;
-
-    margin:
-        0 auto 25px;
-
-    border-radius: 50%;
-
-    display: flex;
-
+/* Video bitince çıkan alan */
+#buttons {
+    position: fixed;
+    inset: 0;
+
+    display: none;
     align-items: center;
-
     justify-content: center;
+    gap: 18px;
 
-    background:
-        linear-gradient(
-            145deg,
-            #22c55e,
-            #16a34a
-        );
-
-    box-shadow:
-
-        0 0 0 10px
-        rgba(34,197,94,.08),
-
-        0 0 50px
-        rgba(34,197,94,.35);
-
-    animation:
-        checkPop
-        .8s
-        .2s
-        cubic-bezier(.17,.89,.32,1.4)
-        both;
+    background: rgba(0,0,0,.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
-
-.check::after {
-
-    content:
-        "✓";
-
-    font-size: 55px;
-
-    font-weight: bold;
-
-    color: white;
-}
-
-
-@keyframes checkPop {
-
-    from {
-
-        transform:
-            scale(0);
-
-    }
-
-    to {
-
-        transform:
-            scale(1);
-
-    }
-
-}
-
-
-/* =====================================================
-   BAŞLIK
-===================================================== */
-
-h1 {
-
-    font-size:
-        clamp(
-            42px,
-            10vw,
-            68px
-        );
-
-    letter-spacing:
-        6px;
-
-    font-weight:
-        900;
-
-    background:
-        linear-gradient(
-            90deg,
-            #ffffff,
-            #a7f3d0,
-            #ffffff
-        );
-
-    -webkit-background-clip:
-        text;
-
-    -webkit-text-fill-color:
-        transparent;
-
-    animation:
-        titleIn
-        1s
-        .5s
-        both;
-}
-
-
-@keyframes titleIn {
-
-    from {
-
-        opacity: 0;
-
-        letter-spacing:
-            20px;
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        letter-spacing:
-            6px;
-
-    }
-
-}
-
-
-/* =====================================================
-   AÇIKLAMA
-===================================================== */
-
-.subtitle {
-
-    margin-top:
-        15px;
-
-    color:
-        rgba(255,255,255,.7);
-
-    font-size:
-        17px;
-
-    line-height:
-        1.6;
-
-    animation:
-        fadeIn
-        1s
-        .8s
-        both;
-}
-
-
-@keyframes fadeIn {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(10px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0);
-
-    }
-
-}
-
-
-/* =====================================================
-   BUTON
-===================================================== */
-
+/* Butonlar */
 button {
+    min-width: 150px;
+    height: 58px;
+    padding: 0 25px;
 
-    margin-top:
-        32px;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 18px;
 
-    width:
-        100%;
+    background: rgba(255,255,255,.12);
+    color: white;
 
-    max-width:
-        280px;
+    font-size: 16px;
+    font-weight: 700;
 
-    height:
-        58px;
+    cursor: pointer;
 
-    border:
-        none;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 
-    border-radius:
-        18px;
+    box-shadow: 0 10px 35px rgba(0,0,0,.35);
 
-    background:
-        linear-gradient(
-            135deg,
-            #22c55e,
-            #16a34a
-        );
-
-    color:
-        white;
-
-    font-size:
-        17px;
-
-    font-weight:
-        700;
-
-    cursor:
-        pointer;
-
-    box-shadow:
-        0 10px 30px
-        rgba(34,197,94,.25);
-
-    transition:
-        transform .2s,
-        box-shadow .2s;
+    transition: .2s;
 }
-
 
 button:hover {
-
-    transform:
-        translateY(-3px);
-
-    box-shadow:
-        0 15px 40px
-        rgba(34,197,94,.4);
+    transform: translateY(-3px);
+    background: rgba(255,255,255,.2);
 }
-
 
 button:active {
-
-    transform:
-        scale(.96);
-
+    transform: scale(.94);
 }
 
+/* İlerle butonu */
+#nextBtn {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border: none;
+}
 
-/* =====================================================
-   MOBİL
-===================================================== */
-
+/* Telefon dikeyse de düzgün görünsün */
 @media (max-width: 600px) {
-
-    .container {
-
-        padding:
-            38px 22px;
-
-        border-radius:
-            26px;
-
+    #buttons {
+        gap: 10px;
+        padding: 15px;
     }
 
-
-    .check {
-
-        width:
-            85px;
-
-        height:
-            85px;
-
+    button {
+        min-width: 130px;
+        height: 54px;
+        font-size: 14px;
     }
-
-
-    .check::after {
-
-        font-size:
-            48px;
-
-    }
-
-
-    .subtitle {
-
-        font-size:
-            15px;
-
-    }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
+<video id="video" autoplay playsinline preload="auto">
+    <source src="8.mp4" type="video/mp4">
+</video>
 
-<!-- =====================================================
-     ARKA PLAN
-===================================================== -->
+<div id="buttons">
 
-<div class="background">
-
-
-    <div class="light one"></div>
-
-    <div class="light two"></div>
-
-
-    <span
-        class="particle"
-        style="
-            left:10%;
-            animation-delay:0s;
-        ">
-    </span>
-
-
-    <span
-        class="particle"
-        style="
-            left:25%;
-            animation-delay:1s;
-        ">
-    </span>
-
-
-    <span
-        class="particle"
-        style="
-            left:40%;
-            animation-delay:2s;
-        ">
-    </span>
-
-
-    <span
-        class="particle"
-        style="
-            left:60%;
-            animation-delay:.5s;
-        ">
-    </span>
-
-
-    <span
-        class="particle"
-        style="
-            left:75%;
-            animation-delay:1.5s;
-        ">
-    </span>
-
-
-    <span
-        class="particle"
-        style="
-            left:90%;
-            animation-delay:2.5s;
-        ">
-    </span>
-
-</div>
-
-
-
-<!-- =====================================================
-     ANA EKRAN
-===================================================== -->
-
-<div class="container">
-
-
-    <div class="check"></div>
-
-
-    <h1>
-        FINISH
-    </h1>
-
-
-    <p class="subtitle">
-
-        Görevi başarıyla tamamladın.<br>
-
-        Hazırsan yolculuğa devam edebilirsin.
-
-    </p>
-
-
-    <button
-        id="continueButton"
-        onclick="devamEt()">
-
-        DEVAM ET
-
+    <button id="repeatBtn">
+        ↻ TEKRARLA
     </button>
 
+    <button id="nextBtn">
+        İLERLE →
+    </button>
 
 </div>
-
-
 
 <script>
 
-/* =====================================================
-   DEVAM ET
-===================================================== */
+const video = document.getElementById("video");
+const buttons = document.getElementById("buttons");
+const repeatBtn = document.getElementById("repeatBtn");
+const nextBtn = document.getElementById("nextBtn");
 
-function devamEt() {
+/* Sayfa açılır açılmaz 8.mp4 */
+window.addEventListener("load", () => {
 
-    /*
-    Burada localStorage temizlenmiyor.
+    video.controls = false;
 
-    Böylece daha önce kaydedilen:
+    video.play().catch(() => {
+        // Bazı tarayıcılar otomatik oynatmayı engellerse
+        // kullanıcı etkileşimi gerekebilir.
+    });
 
-    - video
-    - bölüm
-    - maden ilerlemesi
-    - altın sayısı
+});
 
-    gibi kayıtlar korunur.
-    */
+/* Video bittiğinde butonları göster */
+video.addEventListener("ended", () => {
 
+    buttons.style.display = "flex";
 
-    window.location.href =
-        "index.html";
+});
 
-}
+/* Tekrarla */
+repeatBtn.addEventListener("click", () => {
+
+    buttons.style.display = "none";
+
+    video.currentTime = 0;
+    video.play();
+
+});
+
+/* İlerle → 9.mp4 */
+nextBtn.addEventListener("click", () => {
+
+    buttons.style.display = "none";
+
+    video.src = "9.mp4";
+    video.load();
+
+    video.play();
+
+});
 
 </script>
 
-
 </body>
-
 </html>
