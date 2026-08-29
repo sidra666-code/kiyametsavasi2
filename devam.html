@@ -3,11 +3,14 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-               maximum-scale=1.0, user-scalable=no">
 
-<title>Video</title>
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Devam</title>
 
 <style>
 * {
@@ -17,105 +20,104 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     overflow: hidden;
     background: #000;
 }
 
-body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Video */
 video {
     width: 100%;
     height: 100%;
     object-fit: contain;
     display: block;
-
-    /* Kontroller tamamen gizli */
-    pointer-events: none;
 }
 
-/* Video bitince çıkan alan */
+/* Video kontrollerini göstermiyoruz */
+video::-webkit-media-controls {
+    display: none !important;
+}
+
+video::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+/* Video bitince */
 #buttons {
     position: fixed;
     inset: 0;
 
     display: none;
+
     align-items: center;
     justify-content: center;
-    gap: 18px;
 
-    background: rgba(0,0,0,.35);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    gap: 15px;
+
+    background: rgba(0,0,0,.45);
 }
 
-/* Butonlar */
+/* Buton */
 button {
-    min-width: 150px;
+    min-width: 145px;
     height: 58px;
+
     padding: 0 25px;
 
-    border: 1px solid rgba(255,255,255,.2);
+    border: none;
     border-radius: 18px;
 
-    background: rgba(255,255,255,.12);
+    background: rgba(255,255,255,.15);
+
     color: white;
 
     font-size: 16px;
-    font-weight: 700;
+    font-weight: bold;
 
     cursor: pointer;
 
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 
-    box-shadow: 0 10px 35px rgba(0,0,0,.35);
+    box-shadow: 0 8px 30px rgba(0,0,0,.4);
 
     transition: .2s;
-}
-
-button:hover {
-    transform: translateY(-3px);
-    background: rgba(255,255,255,.2);
 }
 
 button:active {
     transform: scale(.94);
 }
 
-/* İlerle butonu */
 #nextBtn {
     background: linear-gradient(135deg, #22c55e, #16a34a);
-    border: none;
 }
 
-/* Telefon dikeyse de düzgün görünsün */
+/* Mobil */
 @media (max-width: 600px) {
-    #buttons {
-        gap: 10px;
-        padding: 15px;
-    }
 
     button {
-        min-width: 130px;
+        min-width: 125px;
         height: 54px;
         font-size: 14px;
     }
+
 }
 </style>
 </head>
 
 <body>
 
-<video id="video" autoplay playsinline preload="auto">
+<video
+    id="video"
+    autoplay
+    muted
+    playsinline
+    preload="auto">
+    
     <source src="8.mp4" type="video/mp4">
+
 </video>
 
 <div id="buttons">
@@ -137,44 +139,55 @@ const buttons = document.getElementById("buttons");
 const repeatBtn = document.getElementById("repeatBtn");
 const nextBtn = document.getElementById("nextBtn");
 
+
 /* Sayfa açılır açılmaz 8.mp4 */
 window.addEventListener("load", () => {
 
-    video.controls = false;
-
     video.play().catch(() => {
-        // Bazı tarayıcılar otomatik oynatmayı engellerse
-        // kullanıcı etkileşimi gerekebilir.
+        console.log("Video oynatılamadı.");
     });
 
 });
 
-/* Video bittiğinde butonları göster */
+
+/* 8.mp4 bittiğinde butonları göster */
 video.addEventListener("ended", () => {
 
     buttons.style.display = "flex";
 
 });
 
-/* Tekrarla */
+
+/* TEKRARLA */
 repeatBtn.addEventListener("click", () => {
 
     buttons.style.display = "none";
 
     video.currentTime = 0;
+
     video.play();
 
 });
 
-/* İlerle → 9.mp4 */
+
+/* İLERLE → 9.mp4 */
 nextBtn.addEventListener("click", () => {
 
     buttons.style.display = "none";
 
     video.src = "9.mp4";
+
     video.load();
 
     video.play();
+
+});
+
+
+/* 9.mp4 bitince tekrar butonları göster */
+video.addEventListener("ended", () => {
+
+    buttons.style.display = "flex";
 
 });
 
