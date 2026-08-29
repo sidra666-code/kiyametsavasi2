@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -20,8 +19,7 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body {
+html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
@@ -35,7 +33,7 @@ video {
     display: block;
 }
 
-/* Video kontrollerini göstermiyoruz */
+/* Video kontrollerini tamamen gizle */
 video::-webkit-media-controls {
     display: none !important;
 }
@@ -44,13 +42,12 @@ video::-webkit-media-controls-enclosure {
     display: none !important;
 }
 
-/* Video bitince */
+/* Video bitince butonlar */
 #buttons {
     position: fixed;
     inset: 0;
 
     display: none;
-
     align-items: center;
     justify-content: center;
 
@@ -59,7 +56,7 @@ video::-webkit-media-controls-enclosure {
     background: rgba(0,0,0,.45);
 }
 
-/* Buton */
+/* Butonlar */
 button {
     min-width: 145px;
     height: 58px;
@@ -94,15 +91,12 @@ button:active {
     background: linear-gradient(135deg, #22c55e, #16a34a);
 }
 
-/* Mobil */
 @media (max-width: 600px) {
-
     button {
         min-width: 125px;
         height: 54px;
         font-size: 14px;
     }
-
 }
 </style>
 </head>
@@ -112,10 +106,9 @@ button:active {
 <video
     id="video"
     autoplay
-    muted
     playsinline
     preload="auto">
-    
+
     <source src="8.mp4" type="video/mp4">
 
 </video>
@@ -140,17 +133,38 @@ const repeatBtn = document.getElementById("repeatBtn");
 const nextBtn = document.getElementById("nextBtn");
 
 
-/* Sayfa açılır açılmaz 8.mp4 */
-window.addEventListener("load", () => {
+/* 8.mp4'ü sesli başlat */
+window.addEventListener("load", async () => {
 
-    video.play().catch(() => {
-        console.log("Video oynatılamadı.");
-    });
+    try {
+        video.muted = false;
+        video.volume = 1.0;
+
+        await video.play();
+
+    } catch (error) {
+
+        console.log("Otomatik oynatma engellendi:", error);
+
+        /*
+        Eğer tarayıcı yine de sesi engellerse,
+        ekrana bir kez dokunulduğunda video sesli başlar.
+        */
+
+        document.body.addEventListener("click", () => {
+
+            video.muted = false;
+            video.volume = 1.0;
+            video.play();
+
+        }, { once: true });
+
+    }
 
 });
 
 
-/* 8.mp4 bittiğinde butonları göster */
+/* Video bittiğinde butonları göster */
 video.addEventListener("ended", () => {
 
     buttons.style.display = "flex";
@@ -163,7 +177,12 @@ repeatBtn.addEventListener("click", () => {
 
     buttons.style.display = "none";
 
-    video.currentTime = 0;
+    video.src = "8.mp4";
+
+    video.load();
+
+    video.muted = false;
+    video.volume = 1.0;
 
     video.play();
 
@@ -179,15 +198,10 @@ nextBtn.addEventListener("click", () => {
 
     video.load();
 
+    video.muted = false;
+    video.volume = 1.0;
+
     video.play();
-
-});
-
-
-/* 9.mp4 bitince tekrar butonları göster */
-video.addEventListener("ended", () => {
-
-    buttons.style.display = "flex";
 
 });
 
